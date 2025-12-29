@@ -1333,21 +1333,28 @@ function addRadarSiteMarkers() {
 }
 
 function loadSiteRadar(siteId, siteInfo) {
-    if (!state.nexradMap) return;
+    if (!state.nexradMap || !state.radarVisible) return;
 
     // Remove existing radar layer
     if (state.nexradLayer) {
         state.nexradMap.removeLayer(state.nexradLayer);
     }
 
-    // Get layer name based on product
-    let layerName = `${siteId.toLowerCase()}_n0q`;
-    if (state.nexradProduct === 'N0U') layerName = `${siteId.toLowerCase()}_n0u`;
-    else if (state.nexradProduct === 'N0C') layerName = `${siteId.toLowerCase()}_n0c`;
+    // Get WMS layer and URL based on product
+    let layerName = 'nexrad-n0q-900913';
+    let wmsUrl = 'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0q.cgi';
 
-    // Add site-specific radar layer
-    state.nexradLayer = L.tileLayer.wms('https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0q.cgi', {
-        layers: `nexrad-n0q-900913`,
+    if (state.nexradProduct === 'N0U') {
+        layerName = 'nexrad-n0u-900913';
+        wmsUrl = 'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0u.cgi';
+    } else if (state.nexradProduct === 'N0C') {
+        layerName = 'nexrad-n0c-900913';
+        wmsUrl = 'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0c.cgi';
+    }
+
+    // Add radar layer with correct product
+    state.nexradLayer = L.tileLayer.wms(wmsUrl, {
+        layers: layerName,
         format: 'image/png',
         transparent: true,
         opacity: 0.7
@@ -1490,11 +1497,6 @@ function updateNexradLegend() {
         if (legendLabels) legendLabels.innerHTML = '<span>75+</span><span>60</span><span>40</span><span>20</span><span>0</span><span>-30</span>';
         if (legendUnit) legendUnit.textContent = 'dBZ';
     }
-
-    // Update info bar
-    const productNames = { 'N0Q': 'Base Reflectivity', 'N0U': 'Base Velocity', 'N0C': 'Correlation Coefficient' };
-    const productEl = document.getElementById('nexradProduct');
-    if (productEl) productEl.textContent = productNames[state.nexradProduct] || 'Base Reflectivity';
 }
 
 function updateNexradTime() {
