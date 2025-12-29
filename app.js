@@ -1369,17 +1369,17 @@ function loadSiteRadar(siteId, siteInfo) {
         state.nexradMap.removeLayer(state.nexradLayer);
     }
 
-    // Get product code (n0q, n0u, n0c)
-    const productCode = state.nexradProduct.toLowerCase();
+    // Use national composite WMS (reliable) and zoom to site
+    let wmsUrl = 'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0q.cgi';
+    let layerName = 'nexrad-n0q-900913';
 
-    // Get 3-letter site code (remove 'K' prefix from 4-letter ID)
-    // e.g., KOKX -> okx, KFWS -> fws
-    const siteCode = siteId.substring(1).toLowerCase();
-
-    // Single-site radar WMS from IEM
-    // Format: n0q-{site}-0 for current, -1 for 5min ago, etc.
-    const wmsUrl = `https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/${productCode}-t.cgi`;
-    const layerName = `${productCode}-${siteCode}-0`;
+    if (state.nexradProduct === 'N0U') {
+        wmsUrl = 'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0u.cgi';
+        layerName = 'nexrad-n0u-900913';
+    } else if (state.nexradProduct === 'N0C') {
+        wmsUrl = 'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0c.cgi';
+        layerName = 'nexrad-n0c-900913';
+    }
 
     state.nexradLayer = L.tileLayer.wms(wmsUrl, {
         layers: layerName,
@@ -1388,8 +1388,8 @@ function loadSiteRadar(siteId, siteInfo) {
         opacity: 0.7
     }).addTo(state.nexradMap);
 
-    // Zoom to the site - closer zoom for single site
-    state.nexradMap.setView([siteInfo.lat, siteInfo.lon], 7);
+    // Zoom to the selected site location
+    state.nexradMap.setView([siteInfo.lat, siteInfo.lon], 8);
 
     // Update info bar
     const productEl = document.getElementById('nexradProductName');
@@ -1879,32 +1879,32 @@ function loadSatelliteLayer() {
         satelliteState.map.removeLayer(satelliteState.layer);
     }
 
-    // RealEarth WMS from SSEC/CIMSS - reliable GOES imagery
-    // https://realearth.ssec.wisc.edu/
-    const layerConfig = {
-        'goes-east': {
-            'geocolor': 'GOES16-ABI-CONUS-GEOCOLOR',
-            'visible': 'GOES16-ABI-CONUS-02',
-            'infrared': 'GOES16-ABI-CONUS-13',
-            'watervapor': 'GOES16-ABI-CONUS-08'
-        },
-        'goes-west': {
-            'geocolor': 'GOES18-ABI-CONUS-GEOCOLOR',
-            'visible': 'GOES18-ABI-CONUS-02',
-            'infrared': 'GOES18-ABI-CONUS-13',
-            'watervapor': 'GOES18-ABI-CONUS-08'
-        }
+    // Use NOAA SLIDER imagery via image overlay
+    // SLIDER provides latest GOES imagery
+    const goesNum = satelliteState.satellite === 'goes-east' ? '16' : '18';
+
+    const bandPaths = {
+        'geocolor': 'GEOCOLOR',
+        'visible': '02',
+        'infrared': '13',
+        'watervapor': '08'
     };
 
-    const layerName = layerConfig[satelliteState.satellite][satelliteState.band];
+    const bandPath = bandPaths[satelliteState.band];
 
-    // RealEarth WMS endpoint
-    satelliteState.layer = L.tileLayer.wms('https://realearth.ssec.wisc.edu/api/image', {
-        layers: layerName,
-        format: 'image/png',
-        transparent: true,
-        opacity: 0.85
+    // NOAA SLIDER image URL
+    const imageUrl = `https://cdn.star.nesdis.noaa.gov/GOES${goesNum}/ABI/CONUS/${bandPath}/latest.jpg`;
+
+    // CONUS approximate bounds
+    const bounds = [[24.0, -126.0], [50.0, -66.0]];
+
+    satelliteState.layer = L.imageOverlay(imageUrl, bounds, {
+        opacity: 0.85,
+        crossOrigin: true
     }).addTo(satelliteState.map);
+
+    // Fit map to CONUS
+    satelliteState.map.fitBounds(bounds);
 
     updateSatelliteInfo();
 }
