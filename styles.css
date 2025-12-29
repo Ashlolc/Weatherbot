@@ -1,4 +1,4 @@
-/* WeatherBot - 3D Black & White Modern UI */
+/* WeatherBot - 3D Black & White Modern UI - Enhanced */
 :root {
     /* Core Colors */
     --bg-primary: #0a0a0a;
@@ -41,7 +41,6 @@
     --transition-slow: 0.5s ease;
 }
 
-/* Mobile adjustments */
 body.mobile-mode {
     --spacing-md: 0.75rem;
     --spacing-lg: 1rem;
@@ -66,7 +65,7 @@ body {
     color: var(--text-primary);
     min-height: 100vh;
     overflow-x: hidden;
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 body.mobile-mode {
@@ -92,9 +91,66 @@ body.mobile-mode {
     background: var(--text-muted);
 }
 
-/* Hidden utility */
 .hidden {
     display: none !important;
+}
+
+/* ========== Weather Background ========== */
+.weather-background {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.3;
+    transition: all 1s ease;
+}
+
+.weather-clear {
+    background: radial-gradient(ellipse at top, #1a1a2e 0%, #0a0a0a 100%);
+}
+
+.weather-cloudy {
+    background: radial-gradient(ellipse at top, #2d2d3a 0%, #0a0a0a 100%);
+}
+
+.weather-rainy {
+    background: linear-gradient(180deg, #1a1a2e 0%, #0a0a0a 100%);
+}
+
+.weather-rainy::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        180deg,
+        transparent,
+        transparent 10px,
+        rgba(255,255,255,0.03) 10px,
+        rgba(255,255,255,0.03) 12px
+    );
+    animation: rain 0.5s linear infinite;
+}
+
+@keyframes rain {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 20px; }
+}
+
+.weather-stormy {
+    background: linear-gradient(180deg, #15151f 0%, #0a0a0a 100%);
+    animation: lightning 4s infinite;
+}
+
+@keyframes lightning {
+    0%, 94%, 96%, 98%, 100% { opacity: 0.3; }
+    95%, 97% { opacity: 0.5; }
+}
+
+.weather-snowy {
+    background: radial-gradient(ellipse at top, #2a2a3a 0%, #0a0a0a 100%);
+}
+
+.weather-foggy {
+    background: radial-gradient(ellipse at center, #252530 0%, #0a0a0a 100%);
 }
 
 /* ========== Modal Overlay ========== */
@@ -114,8 +170,7 @@ body.mobile-mode {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-xl);
-    box-shadow: var(--depth-4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    box-shadow: var(--depth-4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     transform: perspective(1000px) rotateX(2deg);
     transition: transform var(--transition-normal);
     max-width: 500px;
@@ -141,9 +196,13 @@ body.mobile-mode {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--depth-2),
-                inset 0 -2px 4px rgba(0, 0, 0, 0.3),
-                inset 0 2px 4px rgba(255, 255, 255, 0.05);
+    box-shadow: var(--depth-2), inset 0 -2px 4px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.05);
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
 .modal-icon svg {
@@ -187,8 +246,7 @@ body.mobile-mode {
     flex-direction: column;
     align-items: center;
     gap: var(--spacing-sm);
-    box-shadow: var(--depth-2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    box-shadow: var(--depth-2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     transform: perspective(500px) translateZ(0);
 }
 
@@ -223,6 +281,7 @@ body.mobile-mode {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 /* ========== Header ========== */
@@ -259,8 +318,7 @@ body.mobile-mode {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--depth-1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: var(--depth-1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .logo-icon svg {
@@ -339,8 +397,13 @@ body.mobile-mode {
     color: var(--bg-primary);
 }
 
-/* Settings Button */
-.settings-btn {
+/* Header Actions */
+.header-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.action-btn {
     width: 40px;
     height: 40px;
     background: var(--bg-tertiary);
@@ -354,20 +417,20 @@ body.mobile-mode {
     transition: all var(--transition-normal);
 }
 
-.settings-btn svg {
+.action-btn svg {
     width: 20px;
     height: 20px;
     stroke: currentColor;
     transition: transform var(--transition-slow);
 }
 
-.settings-btn:hover {
+.action-btn:hover {
     color: var(--text-primary);
     border-color: var(--text-primary);
 }
 
-.settings-btn:hover svg {
-    transform: rotate(90deg);
+.action-btn:hover svg {
+    transform: rotate(180deg);
 }
 
 /* ========== Search Container ========== */
@@ -387,8 +450,7 @@ body.mobile-mode {
     display: flex;
     align-items: center;
     padding: var(--spacing-sm) var(--spacing-md);
-    box-shadow: var(--depth-2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    box-shadow: var(--depth-2), inset 0 1px 0 rgba(255, 255, 255, 0.02);
     transition: all var(--transition-normal);
     transform: perspective(500px) translateZ(0);
 }
@@ -420,7 +482,7 @@ body.mobile-mode {
     color: var(--text-muted);
 }
 
-.locate-btn {
+.icon-btn {
     width: 36px;
     height: 36px;
     background: var(--bg-tertiary);
@@ -432,15 +494,16 @@ body.mobile-mode {
     align-items: center;
     justify-content: center;
     transition: all var(--transition-normal);
+    margin-left: var(--spacing-xs);
 }
 
-.locate-btn svg {
+.icon-btn svg {
     width: 18px;
     height: 18px;
     stroke: currentColor;
 }
 
-.locate-btn:hover {
+.icon-btn:hover {
     background: var(--text-primary);
     color: var(--bg-primary);
 }
@@ -468,6 +531,12 @@ body.mobile-mode {
 
 .autocomplete-dropdown.show {
     display: block;
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .autocomplete-item {
@@ -515,10 +584,23 @@ body.mobile-mode {
     padding: 0 var(--spacing-xl) var(--spacing-xl);
     display: grid;
     gap: var(--spacing-lg);
+    grid-template-columns: 1fr;
 }
 
 .mobile-mode .main-content {
     padding: 0 var(--spacing-md) var(--spacing-md);
+}
+
+@media (min-width: 1024px) {
+    .main-content {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .main-content .current-weather,
+    .main-content .forecast-section.daily,
+    .main-content .alerts-section {
+        grid-column: span 2;
+    }
 }
 
 /* ========== Weather Cards ========== */
@@ -526,8 +608,7 @@ body.mobile-mode {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-xl);
-    box-shadow: var(--depth-3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    box-shadow: var(--depth-3), inset 0 1px 0 rgba(255, 255, 255, 0.03);
     overflow: hidden;
     transform: perspective(1000px) rotateX(1deg);
     transition: transform var(--transition-normal);
@@ -537,11 +618,11 @@ body.mobile-mode {
     transform: perspective(1000px) rotateX(0deg) translateY(-2px);
 }
 
-.current-weather .card-inner {
+.card-inner {
     padding: var(--spacing-xl);
 }
 
-.mobile-mode .current-weather .card-inner {
+.mobile-mode .card-inner {
     padding: var(--spacing-lg);
 }
 
@@ -575,13 +656,17 @@ body.mobile-mode {
     height: 100%;
     background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-primary));
     border-radius: 50%;
-    box-shadow: var(--depth-2),
-                inset -20px -20px 40px rgba(0, 0, 0, 0.4),
-                inset 20px 20px 40px rgba(255, 255, 255, 0.05);
+    box-shadow: var(--depth-2), inset -20px -20px 40px rgba(0, 0, 0, 0.4), inset 20px 20px 40px rgba(255, 255, 255, 0.05);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 3rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
 }
 
 .weather-info .location-name {
@@ -606,11 +691,17 @@ body.mobile-mode {
     font-size: 1.125rem;
     color: var(--text-secondary);
     text-transform: capitalize;
+    margin-bottom: var(--spacing-xs);
+}
+
+.weather-info .feels-like {
+    font-size: 0.875rem;
+    color: var(--text-muted);
 }
 
 .weather-details {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--spacing-md);
     padding-top: var(--spacing-lg);
     border-top: 1px solid var(--border-color);
@@ -649,9 +740,127 @@ body.mobile-mode {
 }
 
 .detail-item .detail-value {
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--text-primary);
+}
+
+/* ========== Sun & Moon Card ========== */
+.sun-moon-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+}
+
+.sun-moon-item {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    text-align: center;
+    transition: transform var(--transition-normal);
+}
+
+.sun-moon-item:hover {
+    transform: translateY(-2px);
+}
+
+.sun-moon-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.sun-moon-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-xs);
+}
+
+.sun-moon-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.moon-phase-item .sun-moon-value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+/* ========== Saved Locations ========== */
+.saved-locations-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.no-saved {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    text-align: center;
+    padding: var(--spacing-md);
+}
+
+.saved-location-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-fast);
+}
+
+.saved-location-item:hover {
+    background: var(--border-color);
+}
+
+.saved-location-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+    flex: 1;
+}
+
+.saved-location-info svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--text-muted);
+}
+
+.saved-location-info span {
+    font-size: 0.875rem;
+}
+
+.remove-saved-btn {
+    width: 28px;
+    height: 28px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.remove-saved-btn:hover {
+    background: rgba(255, 0, 0, 0.2);
+    color: #ff6b6b;
+}
+
+.remove-saved-btn svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
 }
 
 /* ========== Alerts Section ========== */
@@ -690,6 +899,16 @@ body.mobile-mode {
     font-size: 0.875rem;
     text-align: center;
     padding: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.no-alerts svg {
+    width: 20px;
+    height: 20px;
+    stroke: #4ade80;
 }
 
 .alert-item {
@@ -697,14 +916,38 @@ body.mobile-mode {
     border-left: 3px solid var(--text-primary);
     border-radius: var(--radius-sm);
     padding: var(--spacing-md);
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: flex-start;
 }
 
 .alert-item.warning {
-    border-left-color: #ffa500;
+    border-left-color: #fbbf24;
 }
 
 .alert-item.severe {
-    border-left-color: #ff4444;
+    border-left-color: #ef4444;
+}
+
+.alert-icon {
+    flex-shrink: 0;
+}
+
+.alert-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.alert-item.warning .alert-icon svg {
+    stroke: #fbbf24;
+}
+
+.alert-item.severe .alert-icon svg {
+    stroke: #ef4444;
+}
+
+.alert-content {
+    flex: 1;
 }
 
 .alert-title {
@@ -715,6 +958,7 @@ body.mobile-mode {
 .alert-desc {
     font-size: 0.875rem;
     color: var(--text-secondary);
+    line-height: 1.5;
 }
 
 /* ========== Forecast Sections ========== */
@@ -735,7 +979,7 @@ body.mobile-mode {
 
 .hourly-item {
     flex-shrink: 0;
-    min-width: 80px;
+    min-width: 90px;
     padding: var(--spacing-md);
     background: var(--bg-tertiary);
     border-radius: var(--radius-md);
@@ -761,6 +1005,12 @@ body.mobile-mode {
 .hourly-item .temp {
     font-size: 1rem;
     font-weight: 600;
+}
+
+.hourly-item .rain-chance {
+    font-size: 0.7rem;
+    color: #60a5fa;
+    margin-top: var(--spacing-xs);
 }
 
 /* Daily Forecast */
@@ -789,26 +1039,37 @@ body.mobile-mode {
     transform: translateX(4px);
 }
 
+.daily-item .day-info {
+    display: flex;
+    flex-direction: column;
+}
+
 .daily-item .day {
     font-weight: 500;
+}
+
+.daily-item .condition {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: capitalize;
 }
 
 .daily-item .icon {
     font-size: 1.25rem;
 }
 
-.daily-item .condition {
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-}
-
-.mobile-mode .daily-item .condition {
-    display: none;
+.daily-item .rain-chance {
+    font-size: 0.75rem;
+    color: #60a5fa;
+    min-width: 50px;
+    text-align: center;
 }
 
 .daily-item .temps {
     display: flex;
     gap: var(--spacing-sm);
+    min-width: 80px;
+    justify-content: flex-end;
 }
 
 .daily-item .temp-high {
@@ -830,6 +1091,7 @@ body.mobile-mode {
     min-height: 500px;
     display: flex;
     flex-direction: column;
+    grid-column: span 2;
 }
 
 .radar-header {
@@ -872,7 +1134,6 @@ body.mobile-mode {
     background: var(--bg-primary);
 }
 
-/* Leaflet map styling */
 .leaflet-container {
     background: var(--bg-primary) !important;
     font-family: inherit;
@@ -912,12 +1173,7 @@ body.mobile-mode {
     width: 200%;
     height: 200%;
     transform: translate(-50%, -50%);
-    background: conic-gradient(
-        from 0deg,
-        transparent 0deg,
-        rgba(255, 255, 255, 0.05) 30deg,
-        transparent 60deg
-    );
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(255, 255, 255, 0.05) 30deg, transparent 60deg);
     animation: radar-spin 4s linear infinite;
     opacity: 0.5;
 }
@@ -944,13 +1200,7 @@ body.mobile-mode {
 
 .legend-bar {
     height: 8px;
-    background: linear-gradient(to right,
-        rgba(255, 255, 255, 0.1),
-        rgba(255, 255, 255, 0.3),
-        rgba(255, 255, 255, 0.5),
-        rgba(255, 255, 255, 0.7),
-        rgba(255, 255, 255, 1)
-    );
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 1));
     border-radius: 4px;
     margin-bottom: var(--spacing-sm);
 }
@@ -966,8 +1216,8 @@ body.mobile-mode {
 .chat-sidebar {
     position: fixed;
     top: 0;
-    right: -400px;
-    width: 400px;
+    right: -420px;
+    width: 420px;
     max-width: 100%;
     height: 100vh;
     background: var(--bg-secondary);
@@ -1009,7 +1259,12 @@ body.mobile-mode {
     stroke: var(--text-primary);
 }
 
-.close-chat-btn {
+.chat-header-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.chat-action-btn {
     width: 32px;
     height: 32px;
     background: transparent;
@@ -1023,12 +1278,12 @@ body.mobile-mode {
     transition: all var(--transition-fast);
 }
 
-.close-chat-btn:hover {
+.chat-action-btn:hover {
     background: var(--bg-secondary);
     color: var(--text-primary);
 }
 
-.close-chat-btn svg {
+.chat-action-btn svg {
     width: 16px;
     height: 16px;
     stroke: currentColor;
@@ -1058,6 +1313,7 @@ body.mobile-mode {
     align-items: center;
     justify-content: center;
     box-shadow: var(--depth-2);
+    animation: float 3s ease-in-out infinite;
 }
 
 .bot-avatar svg {
@@ -1068,19 +1324,45 @@ body.mobile-mode {
 
 .chat-welcome p {
     color: var(--text-secondary);
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.6;
 }
 
 .chat-welcome .config-hint {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
+    margin-top: var(--spacing-lg);
+}
+
+.quick-questions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    margin-top: var(--spacing-md);
+}
+
+.quick-q {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-sm) var(--spacing-md);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.quick-q:hover {
+    background: var(--border-color);
+    color: var(--text-primary);
 }
 
 /* Chat Messages */
 .message {
-    max-width: 85%;
-    padding: var(--spacing-md);
-    border-radius: var(--radius-md);
+    display: flex;
+    gap: var(--spacing-sm);
+    max-width: 90%;
     animation: fadeIn 0.3s ease;
 }
 
@@ -1090,25 +1372,132 @@ body.mobile-mode {
 }
 
 .message.user {
+    margin-left: auto;
+    flex-direction: row-reverse;
+}
+
+.message.user .message-content {
     background: var(--text-primary);
     color: var(--bg-primary);
-    margin-left: auto;
-    border-bottom-right-radius: 4px;
+    border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-lg);
 }
 
-.message.bot {
+.message.bot .message-content {
     background: var(--bg-tertiary);
     color: var(--text-primary);
-    border-bottom-left-radius: 4px;
+    border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm);
 }
 
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    background: var(--bg-tertiary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.message-avatar svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--text-primary);
+}
+
+.message-content {
+    padding: var(--spacing-md);
+    line-height: 1.6;
+    font-size: 0.9rem;
+}
+
+/* Markdown Styles in Chat */
+.message-content h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: var(--spacing-md) 0 var(--spacing-sm);
+    color: inherit;
+}
+
+.message-content h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: var(--spacing-md) 0 var(--spacing-sm);
+    color: inherit;
+}
+
+.message-content h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: var(--spacing-sm) 0;
+    color: inherit;
+}
+
+.message-content p {
+    margin-bottom: var(--spacing-sm);
+}
+
+.message-content p:last-child {
+    margin-bottom: 0;
+}
+
+.message-content strong {
+    font-weight: 600;
+}
+
+.message-content em {
+    font-style: italic;
+}
+
+.message-content ul,
+.message-content ol {
+    margin: var(--spacing-sm) 0;
+    padding-left: var(--spacing-lg);
+}
+
+.message-content li {
+    margin-bottom: var(--spacing-xs);
+}
+
+.message-content code {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Monaco, Consolas, monospace;
+    font-size: 0.85em;
+}
+
+.message.user .message-content code {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.message-content pre {
+    background: rgba(0, 0, 0, 0.2);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+    margin: var(--spacing-sm) 0;
+}
+
+.message-content pre code {
+    background: none;
+    padding: 0;
+}
+
+/* Typing Indicator */
 .message.typing {
+    max-width: auto;
+}
+
+.typing-indicator {
     display: flex;
     gap: 4px;
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-lg);
 }
 
-.message.typing span {
+.typing-indicator span {
     width: 8px;
     height: 8px;
     background: var(--text-muted);
@@ -1116,12 +1505,12 @@ body.mobile-mode {
     animation: typing 1.4s infinite;
 }
 
-.message.typing span:nth-child(2) { animation-delay: 0.2s; }
-.message.typing span:nth-child(3) { animation-delay: 0.4s; }
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes typing {
-    0%, 60%, 100% { transform: translateY(0); }
-    30% { transform: translateY(-8px); }
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-8px); opacity: 1; }
 }
 
 /* Chat Input */
@@ -1140,7 +1529,7 @@ body.mobile-mode {
     border-radius: var(--radius-md);
     padding: var(--spacing-sm) var(--spacing-md);
     color: var(--text-primary);
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     outline: none;
     transition: border-color var(--transition-fast);
 }
@@ -1155,8 +1544,8 @@ body.mobile-mode {
 }
 
 .send-btn {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     background: var(--text-primary);
     border: none;
     border-radius: var(--radius-md);
@@ -1178,8 +1567,8 @@ body.mobile-mode {
 }
 
 .send-btn svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     stroke: currentColor;
 }
 
@@ -1244,6 +1633,7 @@ body.mobile-mode {
     font-size: 0.875rem;
     color: var(--text-muted);
     margin-bottom: var(--spacing-md);
+    line-height: 1.5;
 }
 
 .settings-desc a {
@@ -1396,6 +1786,14 @@ body.mobile-mode {
     .device-btn {
         max-width: none;
     }
+
+    .main-content {
+        grid-template-columns: 1fr !important;
+    }
+
+    .radar-container-3d {
+        grid-column: span 1;
+    }
 }
 
 /* Print styles */
@@ -1404,7 +1802,8 @@ body.mobile-mode {
     .search-container,
     .chat-sidebar,
     .nav-menu,
-    .settings-btn {
+    .header-actions,
+    .weather-background {
         display: none !important;
     }
 }
