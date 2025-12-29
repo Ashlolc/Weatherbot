@@ -479,8 +479,16 @@ function setupEventListeners() {
     const nexradProductSelect = document.getElementById('nexradProduct');
     const nexradTiltSelect = document.getElementById('nexradTilt');
 
+    console.log('NEXRAD Setup - toggleAdvancedBtn:', toggleAdvancedBtn);
+    console.log('NEXRAD Setup - advancedRadarSection element:', elements.advancedRadarSection);
+
     if (toggleAdvancedBtn) {
-        toggleAdvancedBtn.addEventListener('click', () => toggleAdvancedRadar(true));
+        toggleAdvancedBtn.addEventListener('click', () => {
+            console.log('Advanced NEXRAD button clicked!');
+            toggleAdvancedRadar(true);
+        });
+    } else {
+        console.log('ERROR: toggleAdvancedBtn not found!');
     }
 
     if (closeAdvancedBtn) {
@@ -1330,15 +1338,24 @@ function updateProductDescription(product) {
 }
 
 function toggleAdvancedRadar(show) {
-    if (!elements.advancedRadarSection) return;
+    console.log('toggleAdvancedRadar called with show:', show);
+    console.log('elements.advancedRadarSection:', elements.advancedRadarSection);
+
+    if (!elements.advancedRadarSection) {
+        console.log('ERROR: advancedRadarSection is null/undefined!');
+        return;
+    }
 
     if (show) {
+        console.log('Showing advanced radar section');
         elements.advancedRadarSection.classList.remove('hidden');
         if (!state.nexradMap) {
+            console.log('Initializing NEXRAD map');
             initNexradRadar();
         }
         setTimeout(() => state.nexradMap?.invalidateSize(), 100);
     } else {
+        console.log('Hiding advanced radar section');
         elements.advancedRadarSection.classList.add('hidden');
     }
 }
