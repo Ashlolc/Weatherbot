@@ -1227,125 +1227,200 @@ function simulateLightning() {
     state.lightningMap.setView([lat, lon], 8);
 }
 
-// ============ Advanced NEXRAD Radar ============
+// ============ NEXRAD Radar ============
 function initNexradRadar() {
     const mapContainer = document.getElementById('nexradMap');
-    console.log('initNexradRadar called, container:', mapContainer);
+    if (!mapContainer || state.nexradMap) return;
 
-    if (!mapContainer) {
-        console.log('ERROR: nexradMap container not found');
-        return;
-    }
-
-    if (state.nexradMap) {
-        console.log('NEXRAD map already exists');
-        return;
-    }
-
-    console.log('Creating NEXRAD map...');
+    // Create map centered on US
     state.nexradMap = L.map('nexradMap', {
-        center: [39.8283, -98.5795], // Center of US
+        center: [39.8283, -98.5795],
         zoom: 4,
         zoomControl: true
     });
 
+    // Add dark base layer
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; OpenStreetMap, &copy; CARTO',
         maxZoom: 18
     }).addTo(state.nexradMap);
 
-    console.log('NEXRAD map created successfully');
+    // Initialize state for layers
+    state.nexradProduct = 'N0Q';
+    state.radarVisible = true;
+    state.warningsVisible = false;
+    state.countiesVisible = false;
+    state.warningsLayer = null;
+    state.countiesLayer = null;
 
-    // Load initial radar data
-    updateNexradRadar();
+    // Add initial radar layer
+    updateNexradLayer();
+
+    // Setup overlay button listeners
+    setupNexradControls();
+
+    // Update time display
+    updateNexradTime();
 }
 
-function updateNexradRadar() {
-    if (!state.nexradMap) return;
+function setupNexradControls() {
+    // Product buttons
+    document.querySelectorAll('.nexrad-btn[data-product]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.nexrad-btn[data-product]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            state.nexradProduct = btn.dataset.product;
+            updateNexradLayer();
+            updateNexradLegend();
+        });
+    });
 
-    const site = elements.nexradSite?.value;
-    const product = elements.nexradProduct?.value || 'N0Q';
-
-    if (!site) {
-        if (elements.nexradSiteInfo) {
-            elements.nexradSiteInfo.querySelector('.site-name').textContent = 'No site selected';
-        }
-        return;
+    // Radar toggle
+    const toggleRadar = document.getElementById('toggleRadar');
+    if (toggleRadar) {
+        toggleRadar.addEventListener('click', () => {
+            state.radarVisible = !state.radarVisible;
+            toggleRadar.classList.toggle('active', state.radarVisible);
+            if (state.radarVisible) {
+                updateNexradLayer();
+            } else if (state.nexradLayer) {
+                state.nexradMap.removeLayer(state.nexradLayer);
+                state.nexradLayer = null;
+            }
+        });
     }
 
-    const siteInfo = CONFIG.nexradSites[site];
-    if (!siteInfo) return;
-
-    // Update site info
-    if (elements.nexradSiteInfo) {
-        elements.nexradSiteInfo.querySelector('.site-name').textContent = `${site} - ${siteInfo.name}`;
+    // Warnings toggle
+    const toggleWarnings = document.getElementById('toggleWarnings');
+    if (toggleWarnings) {
+        toggleWarnings.addEventListener('click', () => {
+            state.warningsVisible = !state.warningsVisible;
+            toggleWarnings.classList.toggle('active', state.warningsVisible);
+            if (state.warningsVisible) {
+                loadWarningsLayer();
+            } else if (state.warningsLayer) {
+                state.nexradMap.removeLayer(state.warningsLayer);
+                state.warningsLayer = null;
+            }
+        });
     }
 
-    // Update scan time
-    if (elements.nexradScanTime) {
-        const now = new Date();
-        elements.nexradScanTime.textContent = `Last update: ${now.toLocaleTimeString()}`;
+    // Counties toggle
+    const toggleCounties = document.getElementById('toggleCounties');
+    if (toggleCounties) {
+        toggleCounties.addEventListener('click', () => {
+            state.countiesVisible = !state.countiesVisible;
+            toggleCounties.classList.toggle('active', state.countiesVisible);
+            if (state.countiesVisible) {
+                loadCountiesLayer();
+            } else if (state.countiesLayer) {
+                state.nexradMap.removeLayer(state.countiesLayer);
+                state.countiesLayer = null;
+            }
+        });
     }
+}
+
+function updateNexradLayer() {
+    if (!state.nexradMap || !state.radarVisible) return;
 
     // Remove existing layer
     if (state.nexradLayer) {
         state.nexradMap.removeLayer(state.nexradLayer);
     }
 
-    // Determine the WMS layer based on product
+    // Get WMS layer name based on product
     let layerName = 'nexrad-n0q-900913';
-    if (product === 'N0U') layerName = 'nexrad-n0u-900913';
-    else if (product === 'N0C') layerName = 'nexrad-n0c-900913';
-    else if (product === 'N0H') layerName = 'nexrad-n0h-900913';
-    else if (product === 'N0K') layerName = 'nexrad-n0k-900913';
-    else if (product === 'N0X') layerName = 'nexrad-n0x-900913';
+    let wmsUrl = 'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0q.cgi';
 
-    // Add IEM NEXRAD WMS layer
-    state.nexradLayer = L.tileLayer.wms('https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0q.cgi', {
+    if (state.nexradProduct === 'N0U') {
+        layerName = 'nexrad-n0u-900913';
+        wmsUrl = 'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0u.cgi';
+    } else if (state.nexradProduct === 'N0C') {
+        layerName = 'nexrad-n0c-900913';
+        wmsUrl = 'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0c.cgi';
+    }
+
+    // Add national composite layer
+    state.nexradLayer = L.tileLayer.wms(wmsUrl, {
         layers: layerName,
         format: 'image/png',
         transparent: true,
         opacity: 0.7
     }).addTo(state.nexradMap);
 
-    // Center on radar site
-    state.nexradMap.setView([siteInfo.lat, siteInfo.lon], 7);
-
-    // Update legend visibility
-    updateNexradLegend(product);
-
-    // Update product description
-    updateProductDescription(product);
+    updateNexradTime();
 }
 
-function updateNexradLegend(product) {
-    const legendReflectivity = document.getElementById('legendReflectivity');
-    const legendVelocity = document.getElementById('legendVelocity');
-    const legendCorrelation = document.getElementById('legendCorrelation');
+function loadWarningsLayer() {
+    if (!state.nexradMap) return;
 
-    if (!legendReflectivity) return;
-
-    legendReflectivity.classList.add('hidden');
-    legendVelocity.classList.add('hidden');
-    legendCorrelation.classList.add('hidden');
-
-    if (product === 'N0U') {
-        legendVelocity.classList.remove('hidden');
-    } else if (product === 'N0C') {
-        legendCorrelation.classList.remove('hidden');
-    } else {
-        legendReflectivity.classList.remove('hidden');
+    // Remove existing warnings layer
+    if (state.warningsLayer) {
+        state.nexradMap.removeLayer(state.warningsLayer);
     }
+
+    // Add NWS warnings WMS layer from IEM
+    state.warningsLayer = L.tileLayer.wms('https://mesonet.agron.iastate.edu/cgi-bin/wms/us/wwa.cgi', {
+        layers: 'warnings_c',
+        format: 'image/png',
+        transparent: true,
+        opacity: 0.8
+    }).addTo(state.nexradMap);
 }
 
-function updateProductDescription(product) {
-    if (!elements.productDescription) return;
+function loadCountiesLayer() {
+    if (!state.nexradMap) return;
 
-    const info = CONFIG.nexradProducts[product];
-    if (info) {
-        elements.productDescription.innerHTML = `
-            <p><strong>${info.name} (${product}):</strong> ${info.desc}</p>
-        `;
+    // Remove existing counties layer
+    if (state.countiesLayer) {
+        state.nexradMap.removeLayer(state.countiesLayer);
+    }
+
+    // Add county borders WMS layer
+    state.countiesLayer = L.tileLayer.wms('https://mesonet.agron.iastate.edu/cgi-bin/wms/us/counties.cgi', {
+        layers: 'uscounties',
+        format: 'image/png',
+        transparent: true,
+        opacity: 0.5
+    }).addTo(state.nexradMap);
+}
+
+function updateNexradLegend() {
+    const legendBar = document.getElementById('legendBar');
+    const legendLabels = document.querySelector('.legend-labels-vertical');
+    const legendUnit = document.querySelector('.legend-unit');
+
+    if (!legendBar) return;
+
+    if (state.nexradProduct === 'N0U') {
+        // Velocity legend
+        legendBar.style.background = 'linear-gradient(to bottom, #00ff00, #008800, #000000, #880000, #ff0000)';
+        if (legendLabels) legendLabels.innerHTML = '<span>+64</span><span>+32</span><span>0</span><span>-32</span><span>-64</span>';
+        if (legendUnit) legendUnit.textContent = 'kts';
+    } else if (state.nexradProduct === 'N0C') {
+        // Correlation coefficient legend
+        legendBar.style.background = 'linear-gradient(to bottom, #ffffff, #00ff00, #ffff00, #ff0000, #000000)';
+        if (legendLabels) legendLabels.innerHTML = '<span>1.00</span><span>0.95</span><span>0.85</span><span>0.70</span><span>0.20</span>';
+        if (legendUnit) legendUnit.textContent = 'CC';
+    } else {
+        // Reflectivity legend
+        legendBar.style.background = 'linear-gradient(to bottom, #ff00ff, #ff0000, #ff6600, #ffff00, #00ff00, #00ffff, #0066ff, #000066)';
+        if (legendLabels) legendLabels.innerHTML = '<span>75+</span><span>60</span><span>40</span><span>20</span><span>0</span><span>-30</span>';
+        if (legendUnit) legendUnit.textContent = 'dBZ';
+    }
+
+    // Update info bar
+    const productNames = { 'N0Q': 'Base Reflectivity', 'N0U': 'Base Velocity', 'N0C': 'Correlation Coefficient' };
+    const productEl = document.getElementById('nexradProduct');
+    if (productEl) productEl.textContent = productNames[state.nexradProduct] || 'Base Reflectivity';
+}
+
+function updateNexradTime() {
+    const timeEl = document.getElementById('nexradTime');
+    if (timeEl) {
+        const now = new Date();
+        timeEl.textContent = now.toLocaleTimeString();
     }
 }
 

@@ -470,164 +470,75 @@
 
         <!-- NEXRAD View -->
         <main id="nexradView" class="main-content hidden">
-            <section class="nexrad-view-container">
-                <div class="nexrad-header">
-                    <h3>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:24px;height:24px;margin-right:8px;">
-                            <circle cx="12" cy="12" r="10"/>
-                            <circle cx="12" cy="12" r="6"/>
-                            <circle cx="12" cy="12" r="2"/>
-                            <line x1="12" y1="2" x2="12" y2="12"/>
-                        </svg>
-                        NEXRAD Radar
-                    </h3>
-                </div>
+            <section class="nexrad-fullscreen">
+                <div id="nexradMap" class="nexrad-map-full"></div>
 
-                <div class="nexrad-controls">
-                    <div class="nexrad-control-group">
-                        <label>Radar Site</label>
-                        <select id="nexradSite" class="radar-select">
-                            <option value="">Select Radar Site...</option>
-                            <optgroup label="Northeast">
-                                <option value="KOKX">New York City, NY (KOKX)</option>
-                                <option value="KBOX">Boston, MA (KBOX)</option>
-                                <option value="KDIX">Philadelphia, PA (KDIX)</option>
-                                <option value="KBGM">Binghamton, NY (KBGM)</option>
-                                <option value="KBUF">Buffalo, NY (KBUF)</option>
-                            </optgroup>
-                            <optgroup label="Southeast">
-                                <option value="KFFC">Atlanta, GA (KFFC)</option>
-                                <option value="KMIA">Miami, FL (KMIA)</option>
-                                <option value="KTBW">Tampa, FL (KTBW)</option>
-                                <option value="KCLX">Charleston, SC (KCLX)</option>
-                                <option value="KMHX">Morehead City, NC (KMHX)</option>
-                            </optgroup>
-                            <optgroup label="Midwest">
-                                <option value="KLOT">Chicago, IL (KLOT)</option>
-                                <option value="KDTX">Detroit, MI (KDTX)</option>
-                                <option value="KIWX">Fort Wayne, IN (KIWX)</option>
-                                <option value="KMKX">Milwaukee, WI (KMKX)</option>
-                                <option value="KMPX">Minneapolis, MN (KMPX)</option>
-                            </optgroup>
-                            <optgroup label="Southern Plains">
-                                <option value="KFWS">Dallas/Fort Worth, TX (KFWS)</option>
-                                <option value="KEWX">Austin/San Antonio, TX (KEWX)</option>
-                                <option value="KHGX">Houston, TX (KHGX)</option>
-                                <option value="KTLX">Oklahoma City, OK (KTLX)</option>
-                                <option value="KINX">Tulsa, OK (KINX)</option>
-                            </optgroup>
-                            <optgroup label="Northern Plains">
-                                <option value="KFSD">Sioux Falls, SD (KFSD)</option>
-                                <option value="KABR">Aberdeen, SD (KABR)</option>
-                                <option value="KBIS">Bismarck, ND (KBIS)</option>
-                                <option value="KMVX">Fargo, ND (KMVX)</option>
-                            </optgroup>
-                            <optgroup label="Rocky Mountains">
-                                <option value="KFTG">Denver, CO (KFTG)</option>
-                                <option value="KGJX">Grand Junction, CO (KGJX)</option>
-                                <option value="KRIW">Riverton, WY (KRIW)</option>
-                                <option value="KSLC">Salt Lake City, UT (KSLC)</option>
-                            </optgroup>
-                            <optgroup label="West Coast">
-                                <option value="KMUX">San Francisco, CA (KMUX)</option>
-                                <option value="KVTX">Los Angeles, CA (KVTX)</option>
-                                <option value="KNKX">San Diego, CA (KNKX)</option>
-                                <option value="KATX">Seattle, WA (KATX)</option>
-                                <option value="KRTX">Portland, OR (KRTX)</option>
-                            </optgroup>
-                            <optgroup label="Alaska">
-                                <option value="PACG">Juneau, AK (PACG)</option>
-                                <option value="PAHG">Anchorage, AK (PAHG)</option>
-                                <option value="PAPD">Fairbanks, AK (PAPD)</option>
-                            </optgroup>
-                            <optgroup label="Hawaii">
-                                <option value="PHKM">Kohala, HI (PHKM)</option>
-                                <option value="PHMO">Molokai, HI (PHMO)</option>
-                                <option value="PHWA">South Shore, HI (PHWA)</option>
-                            </optgroup>
-                        </select>
+                <!-- Overlay Controls -->
+                <div class="nexrad-overlay-controls">
+                    <!-- Product Buttons -->
+                    <div class="nexrad-product-buttons">
+                        <button class="nexrad-btn active" data-product="N0Q" title="Base Reflectivity">
+                            <span class="btn-icon">REF</span>
+                            <span class="btn-label">Reflectivity</span>
+                        </button>
+                        <button class="nexrad-btn" data-product="N0U" title="Base Velocity">
+                            <span class="btn-icon">VEL</span>
+                            <span class="btn-label">Velocity</span>
+                        </button>
+                        <button class="nexrad-btn" data-product="N0C" title="Correlation Coefficient">
+                            <span class="btn-icon">CC</span>
+                            <span class="btn-label">Correlation</span>
+                        </button>
                     </div>
 
-                    <div class="nexrad-control-group">
-                        <label>Radar Product</label>
-                        <select id="nexradProduct" class="radar-select">
-                            <option value="N0Q">Base Reflectivity (N0Q)</option>
-                            <option value="N0U">Base Velocity (N0U)</option>
-                            <option value="N0C">Correlation Coefficient (N0C)</option>
-                            <option value="N0H">Hydrometeor Classification (N0H)</option>
-                            <option value="N0K">Specific Differential Phase (N0K)</option>
-                            <option value="N0X">Differential Reflectivity (N0X)</option>
-                            <option value="DVL">Vertically Integrated Liquid (DVL)</option>
-                            <option value="EET">Enhanced Echo Tops (EET)</option>
-                        </select>
-                    </div>
-
-                    <div class="nexrad-control-group">
-                        <label>Tilt Angle</label>
-                        <select id="nexradTilt" class="radar-select">
-                            <option value="0">0.5° (Lowest)</option>
-                            <option value="1">1.5°</option>
-                            <option value="2">2.4°</option>
-                            <option value="3">3.4°</option>
-                            <option value="4">4.3°</option>
-                        </select>
+                    <!-- Toggle Buttons -->
+                    <div class="nexrad-toggle-buttons">
+                        <button class="nexrad-toggle active" id="toggleRadar" title="Toggle Radar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="12" cy="12" r="6"/>
+                                <circle cx="12" cy="12" r="2"/>
+                            </svg>
+                            Radar
+                        </button>
+                        <button class="nexrad-toggle" id="toggleWarnings" title="Toggle Weather Warnings">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                <line x1="12" y1="9" x2="12" y2="13"/>
+                                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                            </svg>
+                            Warnings
+                        </button>
+                        <button class="nexrad-toggle" id="toggleCounties" title="Toggle County Borders">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <line x1="3" y1="12" x2="21" y2="12"/>
+                                <line x1="12" y1="3" x2="12" y2="21"/>
+                            </svg>
+                            Counties
+                        </button>
                     </div>
                 </div>
 
-                <div class="nexrad-map-container">
-                    <div id="nexradMap" class="nexrad-map"></div>
-                    <div class="nexrad-info-overlay">
-                        <div class="nexrad-site-info" id="nexradSiteInfo">
-                            <span class="site-name">Select a radar site</span>
-                            <span class="scan-time" id="nexradScanTime">--</span>
-                        </div>
+                <!-- Legend Overlay -->
+                <div class="nexrad-legend-overlay" id="nexradLegendOverlay">
+                    <div class="legend-bar-vertical" id="legendBar"></div>
+                    <div class="legend-labels-vertical">
+                        <span>75+</span>
+                        <span>60</span>
+                        <span>40</span>
+                        <span>20</span>
+                        <span>0</span>
+                        <span>-30</span>
                     </div>
+                    <div class="legend-unit">dBZ</div>
                 </div>
 
-                <div class="nexrad-bottom-section">
-                    <div class="nexrad-legends">
-                        <div class="nexrad-legend reflectivity" id="legendReflectivity">
-                            <div class="legend-title">Reflectivity (dBZ)</div>
-                            <div class="legend-gradient reflectivity-gradient"></div>
-                            <div class="legend-labels">
-                                <span>-30</span>
-                                <span>0</span>
-                                <span>20</span>
-                                <span>40</span>
-                                <span>60</span>
-                                <span>75+</span>
-                            </div>
-                        </div>
-                        <div class="nexrad-legend velocity hidden" id="legendVelocity">
-                            <div class="legend-title">Velocity (kts)</div>
-                            <div class="legend-gradient velocity-gradient"></div>
-                            <div class="legend-labels">
-                                <span>-64</span>
-                                <span>-32</span>
-                                <span>0</span>
-                                <span>+32</span>
-                                <span>+64</span>
-                            </div>
-                        </div>
-                        <div class="nexrad-legend correlation hidden" id="legendCorrelation">
-                            <div class="legend-title">Correlation Coefficient</div>
-                            <div class="legend-gradient correlation-gradient"></div>
-                            <div class="legend-labels">
-                                <span>0.20</span>
-                                <span>0.70</span>
-                                <span>0.85</span>
-                                <span>0.95</span>
-                                <span>1.00</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="nexrad-product-info">
-                        <h4>Product Guide</h4>
-                        <div class="product-descriptions" id="productDescription">
-                            <p><strong>Base Reflectivity (N0Q):</strong> Shows precipitation intensity. Higher values indicate heavier precipitation or larger particles.</p>
-                        </div>
-                    </div>
+                <!-- Info Overlay -->
+                <div class="nexrad-info-bar">
+                    <span id="nexradProduct">Base Reflectivity</span>
+                    <span class="separator">|</span>
+                    <span id="nexradTime">--</span>
                 </div>
             </section>
         </main>
