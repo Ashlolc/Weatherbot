@@ -1925,6 +1925,64 @@ body.mobile-mode {
     }
 }
 
+/* Radar Site Markers */
+.radar-site-marker {
+    background: transparent;
+    border: none;
+}
+
+.radar-site-marker .radar-marker-inner {
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #60a5fa;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.radar-site-marker .radar-marker-inner svg {
+    width: 18px;
+    height: 18px;
+    stroke: #60a5fa;
+}
+
+.radar-site-marker:hover .radar-marker-inner {
+    transform: scale(1.1);
+    background: rgba(96, 165, 250, 0.3);
+}
+
+.radar-site-marker.selected .radar-marker-inner {
+    width: 40px;
+    height: 40px;
+    background: #60a5fa;
+    border-color: #ffffff;
+    box-shadow: 0 0 20px rgba(96, 165, 250, 0.6);
+}
+
+.radar-site-marker.selected .radar-marker-inner svg {
+    width: 22px;
+    height: 22px;
+    stroke: #000000;
+}
+
+/* Radar site tooltip */
+.leaflet-tooltip {
+    background: rgba(0, 0, 0, 0.9) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-sm) !important;
+    color: var(--text-primary) !important;
+    font-size: 0.75rem !important;
+    padding: 6px 10px !important;
+}
+
+.leaflet-tooltip-top:before {
+    border-top-color: rgba(0, 0, 0, 0.9) !important;
+}
+
 .advanced-radar-container {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);

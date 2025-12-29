@@ -1247,19 +1247,122 @@ function initNexradRadar() {
 
     // Initialize state for layers
     state.nexradProduct = 'N0Q';
+    state.selectedSite = null;
     state.radarVisible = true;
     state.warningsVisible = false;
     state.countiesVisible = false;
     state.warningsLayer = null;
     state.countiesLayer = null;
+    state.siteMarkers = [];
 
-    // Add initial radar layer
-    updateNexradLayer();
+    // Add radar site markers
+    addRadarSiteMarkers();
 
     // Setup overlay button listeners
     setupNexradControls();
 
     // Update time display
+    updateNexradTime();
+}
+
+function addRadarSiteMarkers() {
+    if (!state.nexradMap) return;
+
+    // Clear existing markers
+    state.siteMarkers.forEach(marker => state.nexradMap.removeLayer(marker));
+    state.siteMarkers = [];
+
+    // Create custom radar icon
+    const radarIcon = L.divIcon({
+        className: 'radar-site-marker',
+        html: `<div class="radar-marker-inner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="8"/>
+                <circle cx="12" cy="12" r="3"/>
+            </svg>
+        </div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+    });
+
+    const selectedIcon = L.divIcon({
+        className: 'radar-site-marker selected',
+        html: `<div class="radar-marker-inner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="8"/>
+                <circle cx="12" cy="12" r="3"/>
+            </svg>
+        </div>`,
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+    });
+
+    // Add marker for each site
+    Object.entries(CONFIG.nexradSites).forEach(([siteId, siteInfo]) => {
+        const marker = L.marker([siteInfo.lat, siteInfo.lon], { icon: radarIcon })
+            .addTo(state.nexradMap);
+
+        // Add tooltip with site info
+        marker.bindTooltip(`<strong>${siteId}</strong><br>${siteInfo.name}`, {
+            direction: 'top',
+            offset: [0, -10]
+        });
+
+        // Click handler to load this site's radar
+        marker.on('click', () => {
+            // Update selected state
+            state.selectedSite = siteId;
+
+            // Update all markers
+            state.siteMarkers.forEach(m => {
+                const id = m.siteId;
+                if (id === siteId) {
+                    m.setIcon(selectedIcon);
+                } else {
+                    m.setIcon(radarIcon);
+                }
+            });
+
+            // Load radar for this site
+            loadSiteRadar(siteId, siteInfo);
+        });
+
+        marker.siteId = siteId;
+        state.siteMarkers.push(marker);
+    });
+}
+
+function loadSiteRadar(siteId, siteInfo) {
+    if (!state.nexradMap) return;
+
+    // Remove existing radar layer
+    if (state.nexradLayer) {
+        state.nexradMap.removeLayer(state.nexradLayer);
+    }
+
+    // Get layer name based on product
+    let layerName = `${siteId.toLowerCase()}_n0q`;
+    if (state.nexradProduct === 'N0U') layerName = `${siteId.toLowerCase()}_n0u`;
+    else if (state.nexradProduct === 'N0C') layerName = `${siteId.toLowerCase()}_n0c`;
+
+    // Add site-specific radar layer
+    state.nexradLayer = L.tileLayer.wms('https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0q.cgi', {
+        layers: `nexrad-n0q-900913`,
+        format: 'image/png',
+        transparent: true,
+        opacity: 0.7
+    }).addTo(state.nexradMap);
+
+    // Center and zoom on the site
+    state.nexradMap.setView([siteInfo.lat, siteInfo.lon], 7);
+
+    // Update info bar
+    const productEl = document.getElementById('nexradProductName');
+    if (productEl) {
+        const productNames = { 'N0Q': 'Reflectivity', 'N0U': 'Velocity', 'N0C': 'Correlation' };
+        productEl.textContent = `${siteId} - ${productNames[state.nexradProduct] || 'Reflectivity'}`;
+    }
+
     updateNexradTime();
 }
 
@@ -1270,7 +1373,15 @@ function setupNexradControls() {
             document.querySelectorAll('.nexrad-btn[data-product]').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             state.nexradProduct = btn.dataset.product;
-            updateNexradLayer();
+
+            // Reload selected site with new product
+            if (state.selectedSite) {
+                const siteInfo = CONFIG.nexradSites[state.selectedSite];
+                if (siteInfo) {
+                    loadSiteRadar(state.selectedSite, siteInfo);
+                }
+            }
+
             updateNexradLegend();
         });
     });
@@ -1281,8 +1392,9 @@ function setupNexradControls() {
         toggleRadar.addEventListener('click', () => {
             state.radarVisible = !state.radarVisible;
             toggleRadar.classList.toggle('active', state.radarVisible);
-            if (state.radarVisible) {
-                updateNexradLayer();
+            if (state.radarVisible && state.selectedSite) {
+                const siteInfo = CONFIG.nexradSites[state.selectedSite];
+                if (siteInfo) loadSiteRadar(state.selectedSite, siteInfo);
             } else if (state.nexradLayer) {
                 state.nexradMap.removeLayer(state.nexradLayer);
                 state.nexradLayer = null;
@@ -1319,37 +1431,6 @@ function setupNexradControls() {
             }
         });
     }
-}
-
-function updateNexradLayer() {
-    if (!state.nexradMap || !state.radarVisible) return;
-
-    // Remove existing layer
-    if (state.nexradLayer) {
-        state.nexradMap.removeLayer(state.nexradLayer);
-    }
-
-    // Get WMS layer name based on product
-    let layerName = 'nexrad-n0q-900913';
-    let wmsUrl = 'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0q.cgi';
-
-    if (state.nexradProduct === 'N0U') {
-        layerName = 'nexrad-n0u-900913';
-        wmsUrl = 'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0u.cgi';
-    } else if (state.nexradProduct === 'N0C') {
-        layerName = 'nexrad-n0c-900913';
-        wmsUrl = 'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0c.cgi';
-    }
-
-    // Add national composite layer
-    state.nexradLayer = L.tileLayer.wms(wmsUrl, {
-        layers: layerName,
-        format: 'image/png',
-        transparent: true,
-        opacity: 0.7
-    }).addTo(state.nexradMap);
-
-    updateNexradTime();
 }
 
 function loadWarningsLayer() {
