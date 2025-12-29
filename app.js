@@ -1216,7 +1216,8 @@ function simulateLightning() {
 
 // ============ Advanced NEXRAD Radar ============
 function initNexradRadar() {
-    if (!elements.nexradMap || state.nexradMap) return;
+    const mapContainer = document.getElementById('nexradMap');
+    if (!mapContainer || state.nexradMap) return;
 
     state.nexradMap = L.map('nexradMap', {
         center: [39.8283, -98.5795], // Center of US
@@ -1228,6 +1229,9 @@ function initNexradRadar() {
         attribution: '&copy; OpenStreetMap, &copy; CARTO',
         maxZoom: 18
     }).addTo(state.nexradMap);
+
+    // Load initial radar data
+    updateNexradRadar();
 }
 
 function updateNexradRadar() {
@@ -1320,16 +1324,17 @@ function updateProductDescription(product) {
 }
 
 function toggleAdvancedRadar(show) {
-    if (!elements.advancedRadarSection) return;
+    const section = document.getElementById('advancedRadarSection');
+    if (!section) return;
 
     if (show) {
-        elements.advancedRadarSection.classList.remove('hidden');
+        section.classList.remove('hidden');
         if (!state.nexradMap) {
             initNexradRadar();
         }
         setTimeout(() => state.nexradMap?.invalidateSize(), 100);
     } else {
-        elements.advancedRadarSection.classList.add('hidden');
+        section.classList.add('hidden');
     }
 }
 
