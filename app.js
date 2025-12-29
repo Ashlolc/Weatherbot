@@ -528,12 +528,15 @@ function switchView(view) {
     }
 
     if (view === 'nexrad') {
-        if (!state.nexradMap) {
-            initNexradRadar();
-        }
+        // Wait for the view to be visible before initializing
         setTimeout(() => {
-            if (state.nexradMap) state.nexradMap.invalidateSize();
-        }, 100);
+            if (!state.nexradMap) {
+                initNexradRadar();
+            }
+            if (state.nexradMap) {
+                state.nexradMap.invalidateSize();
+            }
+        }, 150);
     }
 }
 
@@ -1227,8 +1230,19 @@ function simulateLightning() {
 // ============ Advanced NEXRAD Radar ============
 function initNexradRadar() {
     const mapContainer = document.getElementById('nexradMap');
-    if (!mapContainer || state.nexradMap) return;
+    console.log('initNexradRadar called, container:', mapContainer);
 
+    if (!mapContainer) {
+        console.log('ERROR: nexradMap container not found');
+        return;
+    }
+
+    if (state.nexradMap) {
+        console.log('NEXRAD map already exists');
+        return;
+    }
+
+    console.log('Creating NEXRAD map...');
     state.nexradMap = L.map('nexradMap', {
         center: [39.8283, -98.5795], // Center of US
         zoom: 4,
@@ -1239,6 +1253,8 @@ function initNexradRadar() {
         attribution: '&copy; OpenStreetMap, &copy; CARTO',
         maxZoom: 18
     }).addTo(state.nexradMap);
+
+    console.log('NEXRAD map created successfully');
 
     // Load initial radar data
     updateNexradRadar();
