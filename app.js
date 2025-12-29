@@ -119,6 +119,7 @@ function initElements() {
     elements.locateBtn = document.getElementById('locateBtn');
     elements.dashboardView = document.getElementById('dashboardView');
     elements.radarView = document.getElementById('radarView');
+    elements.nexradView = document.getElementById('nexradView');
     elements.chatSidebar = document.getElementById('chatSidebar');
     elements.chatMessages = document.getElementById('chatMessages');
     elements.chatInput = document.getElementById('chatInput');
@@ -517,11 +518,20 @@ function setupNavigation() {
 function switchView(view) {
     if (elements.dashboardView) elements.dashboardView.classList.toggle('hidden', view !== 'dashboard');
     if (elements.radarView) elements.radarView.classList.toggle('hidden', view !== 'radar');
+    if (elements.nexradView) elements.nexradView.classList.toggle('hidden', view !== 'nexrad');
 
     if (view === 'radar') {
         setTimeout(() => {
             if (state.map) state.map.invalidateSize();
             if (state.lightningMap) state.lightningMap.invalidateSize();
+        }, 100);
+    }
+
+    if (view === 'nexrad') {
+        if (!state.nexradMap) {
+            initNexradRadar();
+        }
+        setTimeout(() => {
             if (state.nexradMap) state.nexradMap.invalidateSize();
         }, 100);
     }
@@ -1320,21 +1330,6 @@ function updateProductDescription(product) {
         elements.productDescription.innerHTML = `
             <p><strong>${info.name} (${product}):</strong> ${info.desc}</p>
         `;
-    }
-}
-
-function toggleAdvancedRadar(show) {
-    const section = document.getElementById('advancedRadarSection');
-    if (!section) return;
-
-    if (show) {
-        section.classList.remove('hidden');
-        if (!state.nexradMap) {
-            initNexradRadar();
-        }
-        setTimeout(() => state.nexradMap?.invalidateSize(), 100);
-    } else {
-        section.classList.add('hidden');
     }
 }
 

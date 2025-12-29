@@ -75,6 +75,15 @@
                     </svg>
                     <span>Radar</span>
                 </button>
+                <button class="nav-btn" data-view="nexrad">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="6"/>
+                        <circle cx="12" cy="12" r="2"/>
+                        <path d="M12 2v10M2 12h10"/>
+                    </svg>
+                    <span>NEXRAD</span>
+                </button>
                 <button class="nav-btn chatbot-btn" id="openChatBtn">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -406,14 +415,6 @@
                             <option value="wind_new">Wind Speed</option>
                             <option value="pressure_new">Pressure</option>
                         </select>
-                        <button class="radar-toggle-btn" id="toggleAdvancedRadar" onclick="alert('Button clicked!'); toggleAdvancedRadar(true)">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <circle cx="12" cy="12" r="10"/>
-                                <circle cx="12" cy="12" r="6"/>
-                                <circle cx="12" cy="12" r="2"/>
-                            </svg>
-                            Advanced NEXRAD
-                        </button>
                     </div>
                 </div>
                 <div class="radar-map-wrapper">
@@ -465,25 +466,21 @@
                     </div>
                 </div>
             </section>
+        </main>
 
-            <!-- Advanced NEXRAD Radar -->
-            <section class="advanced-radar-container hidden" id="advancedRadarSection">
-                <div class="advanced-radar-header">
+        <!-- NEXRAD View -->
+        <main id="nexradView" class="main-content hidden">
+            <section class="nexrad-view-container">
+                <div class="nexrad-header">
                     <h3>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:20px;height:20px;margin-right:8px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:24px;height:24px;margin-right:8px;">
                             <circle cx="12" cy="12" r="10"/>
                             <circle cx="12" cy="12" r="6"/>
                             <circle cx="12" cy="12" r="2"/>
                             <line x1="12" y1="2" x2="12" y2="12"/>
                         </svg>
-                        Advanced NEXRAD Radar
+                        NEXRAD Radar
                     </h3>
-                    <button class="close-advanced-btn" id="closeAdvancedRadar" onclick="toggleAdvancedRadar(false)">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <line x1="18" y1="6" x2="6" y2="18"/>
-                            <line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-                    </button>
                 </div>
 
                 <div class="nexrad-controls">
@@ -578,56 +575,58 @@
                 </div>
 
                 <div class="nexrad-map-container">
-                    <div id="nexradMap" class="radar-map"></div>
+                    <div id="nexradMap" class="nexrad-map"></div>
                     <div class="nexrad-info-overlay">
                         <div class="nexrad-site-info" id="nexradSiteInfo">
-                            <span class="site-name">No site selected</span>
+                            <span class="site-name">Select a radar site</span>
                             <span class="scan-time" id="nexradScanTime">--</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="nexrad-legends">
-                    <div class="nexrad-legend reflectivity" id="legendReflectivity">
-                        <div class="legend-title">Reflectivity (dBZ)</div>
-                        <div class="legend-gradient reflectivity-gradient"></div>
-                        <div class="legend-labels">
-                            <span>-30</span>
-                            <span>0</span>
-                            <span>20</span>
-                            <span>40</span>
-                            <span>60</span>
-                            <span>75+</span>
+                <div class="nexrad-bottom-section">
+                    <div class="nexrad-legends">
+                        <div class="nexrad-legend reflectivity" id="legendReflectivity">
+                            <div class="legend-title">Reflectivity (dBZ)</div>
+                            <div class="legend-gradient reflectivity-gradient"></div>
+                            <div class="legend-labels">
+                                <span>-30</span>
+                                <span>0</span>
+                                <span>20</span>
+                                <span>40</span>
+                                <span>60</span>
+                                <span>75+</span>
+                            </div>
+                        </div>
+                        <div class="nexrad-legend velocity hidden" id="legendVelocity">
+                            <div class="legend-title">Velocity (kts)</div>
+                            <div class="legend-gradient velocity-gradient"></div>
+                            <div class="legend-labels">
+                                <span>-64</span>
+                                <span>-32</span>
+                                <span>0</span>
+                                <span>+32</span>
+                                <span>+64</span>
+                            </div>
+                        </div>
+                        <div class="nexrad-legend correlation hidden" id="legendCorrelation">
+                            <div class="legend-title">Correlation Coefficient</div>
+                            <div class="legend-gradient correlation-gradient"></div>
+                            <div class="legend-labels">
+                                <span>0.20</span>
+                                <span>0.70</span>
+                                <span>0.85</span>
+                                <span>0.95</span>
+                                <span>1.00</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="nexrad-legend velocity hidden" id="legendVelocity">
-                        <div class="legend-title">Velocity (kts)</div>
-                        <div class="legend-gradient velocity-gradient"></div>
-                        <div class="legend-labels">
-                            <span>-64</span>
-                            <span>-32</span>
-                            <span>0</span>
-                            <span>+32</span>
-                            <span>+64</span>
-                        </div>
-                    </div>
-                    <div class="nexrad-legend correlation hidden" id="legendCorrelation">
-                        <div class="legend-title">Correlation Coefficient</div>
-                        <div class="legend-gradient correlation-gradient"></div>
-                        <div class="legend-labels">
-                            <span>0.20</span>
-                            <span>0.70</span>
-                            <span>0.85</span>
-                            <span>0.95</span>
-                            <span>1.00</span>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="nexrad-product-info">
-                    <h4>Product Guide</h4>
-                    <div class="product-descriptions" id="productDescription">
-                        <p><strong>Base Reflectivity (N0Q):</strong> Shows precipitation intensity. Higher values indicate heavier precipitation or larger particles.</p>
+                    <div class="nexrad-product-info">
+                        <h4>Product Guide</h4>
+                        <div class="product-descriptions" id="productDescription">
+                            <p><strong>Base Reflectivity (N0Q):</strong> Shows precipitation intensity. Higher values indicate heavier precipitation or larger particles.</p>
+                        </div>
                     </div>
                 </div>
             </section>
