@@ -472,6 +472,33 @@ function setupEventListeners() {
         radarLayerSelect.addEventListener('change', updateRadarLayer);
     }
 
+    // Advanced NEXRAD controls
+    const toggleAdvancedBtn = document.getElementById('toggleAdvancedRadar');
+    const closeAdvancedBtn = document.getElementById('closeAdvancedRadar');
+    const nexradSiteSelect = document.getElementById('nexradSite');
+    const nexradProductSelect = document.getElementById('nexradProduct');
+    const nexradTiltSelect = document.getElementById('nexradTilt');
+
+    if (toggleAdvancedBtn) {
+        toggleAdvancedBtn.addEventListener('click', () => toggleAdvancedRadar(true));
+    }
+
+    if (closeAdvancedBtn) {
+        closeAdvancedBtn.addEventListener('click', () => toggleAdvancedRadar(false));
+    }
+
+    if (nexradSiteSelect) {
+        nexradSiteSelect.addEventListener('change', updateNexradRadar);
+    }
+
+    if (nexradProductSelect) {
+        nexradProductSelect.addEventListener('change', updateNexradRadar);
+    }
+
+    if (nexradTiltSelect) {
+        nexradTiltSelect.addEventListener('change', updateNexradRadar);
+    }
+
     // Share button
     const shareBtn = document.getElementById('shareBtn');
     if (shareBtn) {
@@ -1539,33 +1566,6 @@ function initRadarMap() {
 
     // Initialize lightning map
     initLightningMap();
-
-    // Setup advanced radar controls
-    const toggleAdvancedBtn = document.getElementById('toggleAdvancedRadar');
-    const closeAdvancedBtn = document.getElementById('closeAdvancedRadar');
-    const nexradSiteSelect = document.getElementById('nexradSite');
-    const nexradProductSelect = document.getElementById('nexradProduct');
-    const nexradTiltSelect = document.getElementById('nexradTilt');
-
-    if (toggleAdvancedBtn) {
-        toggleAdvancedBtn.addEventListener('click', () => toggleAdvancedRadar(true));
-    }
-
-    if (closeAdvancedBtn) {
-        closeAdvancedBtn.addEventListener('click', () => toggleAdvancedRadar(false));
-    }
-
-    if (nexradSiteSelect) {
-        nexradSiteSelect.addEventListener('change', updateNexradRadar);
-    }
-
-    if (nexradProductSelect) {
-        nexradProductSelect.addEventListener('change', updateNexradRadar);
-    }
-
-    if (nexradTiltSelect) {
-        nexradTiltSelect.addEventListener('change', updateNexradRadar);
-    }
 }
 
 function updateRadarLayer() {
