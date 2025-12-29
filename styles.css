@@ -1502,6 +1502,16 @@ body.mobile-mode {
     align-items: center;
     justify-content: space-between;
     margin-bottom: var(--spacing-md);
+    position: relative;
+    z-index: 1000;
+}
+
+.radar-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    position: relative;
+    z-index: 1001;
 }
 
 .radar-header h3 {
@@ -1734,6 +1744,8 @@ body.mobile-mode {
     font-size: 0.875rem;
     cursor: pointer;
     transition: all var(--transition-normal);
+    position: relative;
+    z-index: 1002;
 }
 
 .radar-toggle-btn svg {
