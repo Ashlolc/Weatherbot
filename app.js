@@ -9,6 +9,7 @@ const CONFIG = {
     geoApiUrl: 'https://api.openweathermap.org/geo/1.0',
     airQualityUrl: 'https://api.openweathermap.org/data/2.5/air_pollution',
     radarTileUrl: 'https://tile.openweathermap.org/map',
+    nexradTileUrl: 'https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0q.cgi',
     defaultLocation: { lat: 40.7128, lon: -74.0060, name: 'New York, NY' },
     debounceDelay: 300,
     weatherIcons: {
@@ -24,7 +25,58 @@ const CONFIG = {
     },
     moonPhases: ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'],
     aqiLevels: ['Good', 'Fair', 'Moderate', 'Poor', 'Very Poor'],
-    aqiColors: ['#00e400', '#ffff00', '#ff7e00', '#ff0000', '#8f3f97']
+    aqiColors: ['#00e400', '#ffff00', '#ff7e00', '#ff0000', '#8f3f97'],
+    nexradSites: {
+        'KOKX': { lat: 40.8656, lon: -72.8639, name: 'New York City, NY' },
+        'KBOX': { lat: 41.9558, lon: -71.1369, name: 'Boston, MA' },
+        'KDIX': { lat: 39.9469, lon: -74.4108, name: 'Philadelphia, PA' },
+        'KBGM': { lat: 42.1997, lon: -75.9847, name: 'Binghamton, NY' },
+        'KBUF': { lat: 42.9489, lon: -78.7369, name: 'Buffalo, NY' },
+        'KFFC': { lat: 33.3636, lon: -84.5658, name: 'Atlanta, GA' },
+        'KMIA': { lat: 25.6111, lon: -80.4128, name: 'Miami, FL' },
+        'KTBW': { lat: 27.7056, lon: -82.4017, name: 'Tampa, FL' },
+        'KCLX': { lat: 32.6556, lon: -81.0422, name: 'Charleston, SC' },
+        'KMHX': { lat: 34.7761, lon: -76.8761, name: 'Morehead City, NC' },
+        'KLOT': { lat: 41.6044, lon: -88.0847, name: 'Chicago, IL' },
+        'KDTX': { lat: 42.6997, lon: -83.4717, name: 'Detroit, MI' },
+        'KIWX': { lat: 41.3586, lon: -85.7000, name: 'Fort Wayne, IN' },
+        'KMKX': { lat: 42.9678, lon: -88.5506, name: 'Milwaukee, WI' },
+        'KMPX': { lat: 44.8489, lon: -93.5653, name: 'Minneapolis, MN' },
+        'KFWS': { lat: 32.5731, lon: -97.3031, name: 'Dallas/Fort Worth, TX' },
+        'KEWX': { lat: 29.7039, lon: -98.0286, name: 'Austin/San Antonio, TX' },
+        'KHGX': { lat: 29.4719, lon: -95.0792, name: 'Houston, TX' },
+        'KTLX': { lat: 35.3331, lon: -97.2778, name: 'Oklahoma City, OK' },
+        'KINX': { lat: 36.1750, lon: -95.5644, name: 'Tulsa, OK' },
+        'KFSD': { lat: 43.5878, lon: -96.7292, name: 'Sioux Falls, SD' },
+        'KABR': { lat: 45.4558, lon: -98.4131, name: 'Aberdeen, SD' },
+        'KBIS': { lat: 46.7708, lon: -100.7606, name: 'Bismarck, ND' },
+        'KMVX': { lat: 47.5283, lon: -97.3256, name: 'Fargo, ND' },
+        'KFTG': { lat: 39.7867, lon: -104.5458, name: 'Denver, CO' },
+        'KGJX': { lat: 39.0622, lon: -108.2139, name: 'Grand Junction, CO' },
+        'KRIW': { lat: 43.0661, lon: -108.4772, name: 'Riverton, WY' },
+        'KSLC': { lat: 40.9683, lon: -111.9300, name: 'Salt Lake City, UT' },
+        'KMUX': { lat: 37.1550, lon: -121.8983, name: 'San Francisco, CA' },
+        'KVTX': { lat: 34.4117, lon: -119.1792, name: 'Los Angeles, CA' },
+        'KNKX': { lat: 32.9189, lon: -117.0419, name: 'San Diego, CA' },
+        'KATX': { lat: 48.1947, lon: -122.4958, name: 'Seattle, WA' },
+        'KRTX': { lat: 45.7150, lon: -122.9653, name: 'Portland, OR' },
+        'PACG': { lat: 56.8528, lon: -135.5294, name: 'Juneau, AK' },
+        'PAHG': { lat: 60.7258, lon: -151.3514, name: 'Anchorage, AK' },
+        'PAPD': { lat: 65.0350, lon: -147.5014, name: 'Fairbanks, AK' },
+        'PHKM': { lat: 20.1256, lon: -155.7781, name: 'Kohala, HI' },
+        'PHMO': { lat: 21.1328, lon: -157.1803, name: 'Molokai, HI' },
+        'PHWA': { lat: 19.0950, lon: -155.5686, name: 'South Shore, HI' }
+    },
+    nexradProducts: {
+        'N0Q': { name: 'Base Reflectivity', desc: 'Shows precipitation intensity. Higher values indicate heavier precipitation or larger particles.' },
+        'N0U': { name: 'Base Velocity', desc: 'Shows wind velocity relative to the radar. Green = toward radar, red = away from radar. Used for rotation detection.' },
+        'N0C': { name: 'Correlation Coefficient', desc: 'Indicates the consistency of precipitation type. Low values suggest mixed precipitation or debris (e.g., tornado debris).' },
+        'N0H': { name: 'Hydrometeor Classification', desc: 'Classifies precipitation type (rain, snow, hail, etc.) using dual-polarization data.' },
+        'N0K': { name: 'Specific Differential Phase', desc: 'Estimates rainfall rate, particularly useful for heavy rain events and flash flood warnings.' },
+        'N0X': { name: 'Differential Reflectivity', desc: 'Indicates the shape of precipitation particles. Helps distinguish rain from hail.' },
+        'DVL': { name: 'Vertically Integrated Liquid', desc: 'Total water content in a column of atmosphere. High values indicate severe storm potential.' },
+        'EET': { name: 'Enhanced Echo Tops', desc: 'Height of radar echoes. Taller storms often produce more severe weather.' }
+    }
 };
 
 // ============ State Management ============
@@ -47,6 +99,11 @@ const state = {
     airQuality: null,
     map: null,
     radarLayer: null,
+    lightningMap: null,
+    lightningMarkers: [],
+    nexradMap: null,
+    nexradLayer: null,
+    stormCountdownInterval: null,
     chatHistory: [],
     weatherBackground: 'clear'
 };
@@ -89,6 +146,27 @@ function initElements() {
     elements.radarMap = document.getElementById('radarMap');
     elements.savedLocationsContainer = document.getElementById('savedLocationsContainer');
     elements.weatherBackground = document.getElementById('weatherBackground');
+    // New elements
+    elements.windArrow = document.getElementById('windArrow');
+    elements.windSpeedCompass = document.getElementById('windSpeedCompass');
+    elements.windGusts = document.getElementById('windGusts');
+    elements.stormTrackerCard = document.getElementById('stormTrackerCard');
+    elements.stormTrackerContent = document.getElementById('stormTrackerContent');
+    elements.precipBars = document.getElementById('precipBars');
+    elements.precipTimes = document.getElementById('precipTimes');
+    elements.outfitIcon = document.getElementById('outfitIcon');
+    elements.outfitSummary = document.getElementById('outfitSummary');
+    elements.outfitItems = document.getElementById('outfitItems');
+    elements.lightningMap = document.getElementById('lightningMap');
+    elements.strikeCount = document.getElementById('strikeCount');
+    elements.advancedRadarSection = document.getElementById('advancedRadarSection');
+    elements.nexradMap = document.getElementById('nexradMap');
+    elements.nexradSite = document.getElementById('nexradSite');
+    elements.nexradProduct = document.getElementById('nexradProduct');
+    elements.nexradTilt = document.getElementById('nexradTilt');
+    elements.nexradSiteInfo = document.getElementById('nexradSiteInfo');
+    elements.nexradScanTime = document.getElementById('nexradScanTime');
+    elements.productDescription = document.getElementById('productDescription');
 }
 
 // ============ Utility Functions ============
@@ -423,8 +501,12 @@ function switchView(view) {
     if (elements.dashboardView) elements.dashboardView.classList.toggle('hidden', view !== 'dashboard');
     if (elements.radarView) elements.radarView.classList.toggle('hidden', view !== 'radar');
 
-    if (view === 'radar' && state.map) {
-        setTimeout(() => state.map.invalidateSize(), 100);
+    if (view === 'radar') {
+        setTimeout(() => {
+            if (state.map) state.map.invalidateSize();
+            if (state.lightningMap) state.lightningMap.invalidateSize();
+            if (state.nexradMap) state.nexradMap.invalidateSize();
+        }, 100);
     }
 }
 
@@ -658,6 +740,12 @@ async function loadWeatherData(lat, lon, name) {
         updateWeatherBackground();
         updateRadarCenter(lat, lon);
         fetchAlerts(lat, lon);
+        // New features
+        updateWindCompass();
+        updateStormTracker();
+        renderPrecipTimeline();
+        renderOutfitRecommendations();
+        simulateLightning();
 
     } catch (error) {
         console.error('Error loading weather data:', error);
@@ -731,6 +819,501 @@ function renderAirQuality() {
     const color = CONFIG.aqiColors[aqi - 1] || '#999';
 
     elements.aqi.innerHTML = `<span style="color: ${color}">${level}</span>`;
+}
+
+// ============ Wind Compass ============
+function updateWindCompass() {
+    const weather = state.currentWeather;
+    if (!weather || !elements.windArrow) return;
+
+    const windDeg = weather.wind.deg || 0;
+    const windSpeed = weather.wind.speed || 0;
+    const windGust = weather.wind.gust || windSpeed;
+
+    // Convert to km/h for metric
+    const speedKmh = state.tempUnit === 'metric'
+        ? Math.round(windSpeed * 3.6)
+        : Math.round(windSpeed);
+    const gustKmh = state.tempUnit === 'metric'
+        ? Math.round(windGust * 3.6)
+        : Math.round(windGust);
+    const unit = state.tempUnit === 'metric' ? 'km/h' : 'mph';
+
+    // Rotate arrow (wind direction points TO where wind is going, add 180 to show FROM direction)
+    elements.windArrow.style.transform = `translate(-50%, -100%) rotate(${windDeg}deg)`;
+
+    if (elements.windSpeedCompass) {
+        elements.windSpeedCompass.textContent = speedKmh;
+    }
+
+    if (elements.windGusts) {
+        elements.windGusts.textContent = gustKmh > speedKmh
+            ? `Gusts: ${gustKmh} ${unit}`
+            : `Steady wind`;
+    }
+}
+
+// ============ Storm Tracker ============
+function updateStormTracker() {
+    const forecast = state.forecast;
+    const weather = state.currentWeather;
+    if (!forecast || !weather || !elements.stormTrackerContent || !elements.stormTrackerCard) return;
+
+    // Clear existing interval
+    if (state.stormCountdownInterval) {
+        clearInterval(state.stormCountdownInterval);
+    }
+
+    const storms = [];
+    const now = Date.now() / 1000;
+
+    // Check forecast for storms
+    forecast.list.forEach((item, index) => {
+        const condition = item.weather[0].main.toLowerCase();
+        const windSpeed = item.wind.speed * 3.6; // km/h
+        const rainChance = item.pop || 0;
+
+        if (condition.includes('thunderstorm') ||
+            condition.includes('storm') ||
+            (rainChance > 0.7 && windSpeed > 40)) {
+
+            const timeUntil = item.dt - now;
+            if (timeUntil > 0 && timeUntil < 48 * 3600) { // Within 48 hours
+                storms.push({
+                    type: condition.includes('thunderstorm') ? 'Thunderstorm' : 'Severe Weather',
+                    arrivalTime: item.dt,
+                    timeUntil: timeUntil,
+                    windSpeed: Math.round(windSpeed),
+                    rainChance: Math.round(rainChance * 100),
+                    temp: item.main.temp,
+                    icon: item.weather[0].icon
+                });
+            }
+        }
+    });
+
+    // Check current conditions for active storms
+    const currentCondition = weather.weather[0].main.toLowerCase();
+    if (currentCondition.includes('thunderstorm')) {
+        storms.unshift({
+            type: 'Thunderstorm Active',
+            arrivalTime: now,
+            timeUntil: 0,
+            windSpeed: Math.round(weather.wind.speed * 3.6),
+            rainChance: 100,
+            temp: weather.main.temp,
+            icon: weather.weather[0].icon,
+            active: true
+        });
+    }
+
+    if (storms.length === 0) {
+        elements.stormTrackerCard.classList.remove('has-storm');
+        elements.stormTrackerContent.innerHTML = `
+            <div class="no-storms">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22,4 12,14.01 9,11.01"/>
+                </svg>
+                <span>No severe weather detected in the next 48 hours</span>
+            </div>
+        `;
+        return;
+    }
+
+    elements.stormTrackerCard.classList.add('has-storm');
+
+    function renderStorms() {
+        const currentTime = Date.now() / 1000;
+        elements.stormTrackerContent.innerHTML = storms.slice(0, 3).map(storm => {
+            const timeRemaining = storm.arrivalTime - currentTime;
+            let countdownText = 'NOW';
+
+            if (timeRemaining > 0) {
+                const hours = Math.floor(timeRemaining / 3600);
+                const minutes = Math.floor((timeRemaining % 3600) / 60);
+                const seconds = Math.floor(timeRemaining % 60);
+
+                if (hours > 0) {
+                    countdownText = `${hours}h ${minutes}m`;
+                } else if (minutes > 0) {
+                    countdownText = `${minutes}m ${seconds}s`;
+                } else {
+                    countdownText = `${seconds}s`;
+                }
+            }
+
+            return `
+                <div class="storm-item">
+                    <div class="storm-header">
+                        <div class="storm-type">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
+                            </svg>
+                            ${storm.type}
+                        </div>
+                        <div class="storm-countdown">${storm.active ? '⚡ ACTIVE' : countdownText}</div>
+                    </div>
+                    <div class="storm-details">
+                        <div class="storm-detail">
+                            <div class="storm-detail-value">${storm.windSpeed} km/h</div>
+                            <div>Wind</div>
+                        </div>
+                        <div class="storm-detail">
+                            <div class="storm-detail-value">${storm.rainChance}%</div>
+                            <div>Rain Chance</div>
+                        </div>
+                        <div class="storm-detail">
+                            <div class="storm-detail-value">${formatTemp(storm.temp)}</div>
+                            <div>Temperature</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    renderStorms();
+    state.stormCountdownInterval = setInterval(renderStorms, 1000);
+}
+
+// ============ Precipitation Timeline ============
+function renderPrecipTimeline() {
+    const forecast = state.forecast;
+    if (!forecast || !elements.precipBars || !elements.precipTimes) return;
+
+    const hourlyData = forecast.list.slice(0, 12);
+    const maxChance = Math.max(...hourlyData.map(h => h.pop || 0), 0.1);
+
+    elements.precipBars.innerHTML = hourlyData.map(item => {
+        const chance = (item.pop || 0) * 100;
+        const height = Math.max((chance / 100) * 80, 4);
+        let intensity = 'none';
+
+        if (chance >= 70) intensity = 'heavy';
+        else if (chance >= 40) intensity = 'moderate';
+        else if (chance > 0) intensity = 'light';
+
+        return `
+            <div class="precip-bar ${intensity}"
+                 style="height: ${height}px"
+                 data-chance="${Math.round(chance)}%"
+                 title="${Math.round(chance)}% chance of precipitation">
+            </div>
+        `;
+    }).join('');
+
+    // Show times at intervals
+    const times = hourlyData.filter((_, i) => i % 3 === 0).map(item => {
+        const date = new Date(item.dt * 1000);
+        return date.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
+    });
+
+    elements.precipTimes.innerHTML = times.map(t => `<span>${t}</span>`).join('');
+}
+
+// ============ Outfit Recommendations ============
+function renderOutfitRecommendations() {
+    const weather = state.currentWeather;
+    if (!weather || !elements.outfitSummary || !elements.outfitItems) return;
+
+    const temp = weather.main.temp;
+    const feelsLike = weather.main.feels_like;
+    const condition = weather.weather[0].main.toLowerCase();
+    const windSpeed = weather.wind.speed * 3.6; // km/h
+    const humidity = weather.main.humidity;
+    const isRaining = condition.includes('rain') || condition.includes('drizzle');
+    const isSnowing = condition.includes('snow');
+    const isStormy = condition.includes('thunderstorm');
+
+    let mainIcon = '👕';
+    let summary = '';
+    const items = [];
+
+    // Temperature-based recommendations (Celsius)
+    const tempC = state.tempUnit === 'metric' ? temp : (temp - 32) * 5/9;
+
+    if (tempC < -10) {
+        mainIcon = '🧥';
+        summary = 'Bundle up! Extreme cold requires heavy winter gear.';
+        items.push({ icon: '🧥', name: 'Heavy winter coat' });
+        items.push({ icon: '🧣', name: 'Scarf' });
+        items.push({ icon: '🧤', name: 'Insulated gloves' });
+        items.push({ icon: '🎿', name: 'Thermal layers' });
+        items.push({ icon: '👢', name: 'Insulated boots' });
+        items.push({ icon: '🧢', name: 'Warm hat' });
+    } else if (tempC < 0) {
+        mainIcon = '🧥';
+        summary = 'Very cold today. Layer up with warm winter clothing.';
+        items.push({ icon: '🧥', name: 'Winter coat' });
+        items.push({ icon: '🧣', name: 'Scarf' });
+        items.push({ icon: '🧤', name: 'Gloves' });
+        items.push({ icon: '👢', name: 'Winter boots' });
+    } else if (tempC < 10) {
+        mainIcon = '🧥';
+        summary = 'Chilly weather. A warm jacket is recommended.';
+        items.push({ icon: '🧥', name: 'Warm jacket' });
+        items.push({ icon: '👖', name: 'Long pants' });
+        items.push({ icon: '👟', name: 'Closed shoes' });
+    } else if (tempC < 18) {
+        mainIcon = '🧥';
+        summary = 'Cool and comfortable. Light layers work well.';
+        items.push({ icon: '🧥', name: 'Light jacket' });
+        items.push({ icon: '👕', name: 'Long sleeve shirt' });
+        items.push({ icon: '👖', name: 'Pants or jeans' });
+    } else if (tempC < 25) {
+        mainIcon = '👕';
+        summary = 'Pleasant weather! Casual comfortable clothing is perfect.';
+        items.push({ icon: '👕', name: 'T-shirt or light top' });
+        items.push({ icon: '👖', name: 'Pants or shorts' });
+        items.push({ icon: '👟', name: 'Comfortable shoes' });
+    } else if (tempC < 32) {
+        mainIcon = '👕';
+        summary = 'Warm weather. Light, breathable fabrics recommended.';
+        items.push({ icon: '👕', name: 'Light breathable shirt' });
+        items.push({ icon: '🩳', name: 'Shorts' });
+        items.push({ icon: '👡', name: 'Sandals or light shoes' });
+        items.push({ icon: '🧢', name: 'Sun hat' });
+    } else {
+        mainIcon = '🩳';
+        summary = 'Hot! Wear minimal, light-colored clothing. Stay hydrated!';
+        items.push({ icon: '👕', name: 'Light tank top' });
+        items.push({ icon: '🩳', name: 'Shorts' });
+        items.push({ icon: '👡', name: 'Sandals' });
+        items.push({ icon: '🧴', name: 'Sunscreen' });
+        items.push({ icon: '🧢', name: 'Sun protection' });
+    }
+
+    // Weather condition additions
+    if (isRaining || isStormy) {
+        items.push({ icon: '☔', name: 'Umbrella' });
+        items.push({ icon: '🧥', name: 'Waterproof jacket' });
+    }
+
+    if (isSnowing) {
+        items.push({ icon: '👢', name: 'Waterproof boots' });
+    }
+
+    if (windSpeed > 30) {
+        items.push({ icon: '🧥', name: 'Windbreaker' });
+    }
+
+    if (humidity > 80 && tempC > 20) {
+        summary += ' High humidity - moisture-wicking fabrics recommended.';
+    }
+
+    elements.outfitIcon.textContent = mainIcon;
+    elements.outfitSummary.textContent = summary;
+    elements.outfitItems.innerHTML = items.slice(0, 6).map(item => `
+        <div class="outfit-item">
+            <span class="outfit-item-icon">${item.icon}</span>
+            <span>${item.name}</span>
+        </div>
+    `).join('');
+}
+
+// ============ Lightning Map ============
+function initLightningMap() {
+    if (!elements.lightningMap || state.lightningMap) return;
+
+    state.lightningMap = L.map('lightningMap', {
+        center: [state.currentLocation?.lat || 40.7128, state.currentLocation?.lon || -74.0060],
+        zoom: 8,
+        zoomControl: true
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap, &copy; CARTO',
+        maxZoom: 18
+    }).addTo(state.lightningMap);
+
+    // Initial simulation based on weather
+    simulateLightning();
+}
+
+function simulateLightning() {
+    if (!state.lightningMap || !state.currentWeather) return;
+
+    // Clear existing markers
+    state.lightningMarkers.forEach(marker => state.lightningMap.removeLayer(marker));
+    state.lightningMarkers = [];
+
+    const weather = state.currentWeather;
+    const condition = weather.weather[0].main.toLowerCase();
+    const lat = state.currentLocation?.lat || 40.7128;
+    const lon = state.currentLocation?.lon || -74.0060;
+
+    let strikeCount = 0;
+
+    // Generate lightning based on storm conditions
+    if (condition.includes('thunderstorm')) {
+        // Active thunderstorm - many recent strikes
+        strikeCount = Math.floor(Math.random() * 20) + 10;
+
+        for (let i = 0; i < strikeCount; i++) {
+            const offsetLat = (Math.random() - 0.5) * 0.8;
+            const offsetLon = (Math.random() - 0.5) * 0.8;
+            const age = Math.random();
+
+            let ageClass = 'recent';
+            if (age > 0.6) ageClass = 'medium';
+            if (age > 0.85) ageClass = 'old';
+
+            const strikeIcon = L.divIcon({
+                className: 'lightning-strike ' + ageClass,
+                iconSize: [12, 12]
+            });
+
+            const marker = L.marker([lat + offsetLat, lon + offsetLon], { icon: strikeIcon })
+                .addTo(state.lightningMap);
+
+            state.lightningMarkers.push(marker);
+        }
+    } else if (condition.includes('rain') && Math.random() > 0.7) {
+        // Some rain might have distant lightning
+        strikeCount = Math.floor(Math.random() * 5);
+
+        for (let i = 0; i < strikeCount; i++) {
+            const offsetLat = (Math.random() - 0.5) * 1.5;
+            const offsetLon = (Math.random() - 0.5) * 1.5;
+
+            const strikeIcon = L.divIcon({
+                className: 'lightning-strike old',
+                iconSize: [12, 12]
+            });
+
+            const marker = L.marker([lat + offsetLat, lon + offsetLon], { icon: strikeIcon })
+                .addTo(state.lightningMap);
+
+            state.lightningMarkers.push(marker);
+        }
+    }
+
+    if (elements.strikeCount) {
+        elements.strikeCount.textContent = strikeCount;
+    }
+
+    // Center map on location
+    state.lightningMap.setView([lat, lon], 8);
+}
+
+// ============ Advanced NEXRAD Radar ============
+function initNexradRadar() {
+    if (!elements.nexradMap || state.nexradMap) return;
+
+    state.nexradMap = L.map('nexradMap', {
+        center: [39.8283, -98.5795], // Center of US
+        zoom: 4,
+        zoomControl: true
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap, &copy; CARTO',
+        maxZoom: 18
+    }).addTo(state.nexradMap);
+}
+
+function updateNexradRadar() {
+    if (!state.nexradMap) return;
+
+    const site = elements.nexradSite?.value;
+    const product = elements.nexradProduct?.value || 'N0Q';
+
+    if (!site) {
+        if (elements.nexradSiteInfo) {
+            elements.nexradSiteInfo.querySelector('.site-name').textContent = 'No site selected';
+        }
+        return;
+    }
+
+    const siteInfo = CONFIG.nexradSites[site];
+    if (!siteInfo) return;
+
+    // Update site info
+    if (elements.nexradSiteInfo) {
+        elements.nexradSiteInfo.querySelector('.site-name').textContent = `${site} - ${siteInfo.name}`;
+    }
+
+    // Update scan time
+    if (elements.nexradScanTime) {
+        const now = new Date();
+        elements.nexradScanTime.textContent = `Last update: ${now.toLocaleTimeString()}`;
+    }
+
+    // Remove existing layer
+    if (state.nexradLayer) {
+        state.nexradMap.removeLayer(state.nexradLayer);
+    }
+
+    // Determine the WMS layer based on product
+    let layerName = 'nexrad-n0q-900913';
+    if (product === 'N0U') layerName = 'nexrad-n0u-900913';
+    else if (product === 'N0C') layerName = 'nexrad-n0c-900913';
+    else if (product === 'N0H') layerName = 'nexrad-n0h-900913';
+    else if (product === 'N0K') layerName = 'nexrad-n0k-900913';
+    else if (product === 'N0X') layerName = 'nexrad-n0x-900913';
+
+    // Add IEM NEXRAD WMS layer
+    state.nexradLayer = L.tileLayer.wms('https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0q.cgi', {
+        layers: layerName,
+        format: 'image/png',
+        transparent: true,
+        opacity: 0.7
+    }).addTo(state.nexradMap);
+
+    // Center on radar site
+    state.nexradMap.setView([siteInfo.lat, siteInfo.lon], 7);
+
+    // Update legend visibility
+    updateNexradLegend(product);
+
+    // Update product description
+    updateProductDescription(product);
+}
+
+function updateNexradLegend(product) {
+    const legendReflectivity = document.getElementById('legendReflectivity');
+    const legendVelocity = document.getElementById('legendVelocity');
+    const legendCorrelation = document.getElementById('legendCorrelation');
+
+    if (!legendReflectivity) return;
+
+    legendReflectivity.classList.add('hidden');
+    legendVelocity.classList.add('hidden');
+    legendCorrelation.classList.add('hidden');
+
+    if (product === 'N0U') {
+        legendVelocity.classList.remove('hidden');
+    } else if (product === 'N0C') {
+        legendCorrelation.classList.remove('hidden');
+    } else {
+        legendReflectivity.classList.remove('hidden');
+    }
+}
+
+function updateProductDescription(product) {
+    if (!elements.productDescription) return;
+
+    const info = CONFIG.nexradProducts[product];
+    if (info) {
+        elements.productDescription.innerHTML = `
+            <p><strong>${info.name} (${product}):</strong> ${info.desc}</p>
+        `;
+    }
+}
+
+function toggleAdvancedRadar(show) {
+    if (!elements.advancedRadarSection) return;
+
+    if (show) {
+        elements.advancedRadarSection.classList.remove('hidden');
+        if (!state.nexradMap) {
+            initNexradRadar();
+        }
+        setTimeout(() => state.nexradMap?.invalidateSize(), 100);
+    } else {
+        elements.advancedRadarSection.classList.add('hidden');
+    }
 }
 
 function renderHourlyForecast() {
@@ -952,6 +1535,36 @@ function initRadarMap() {
 
     if (state.weatherApiKey) {
         updateRadarLayer();
+    }
+
+    // Initialize lightning map
+    initLightningMap();
+
+    // Setup advanced radar controls
+    const toggleAdvancedBtn = document.getElementById('toggleAdvancedRadar');
+    const closeAdvancedBtn = document.getElementById('closeAdvancedRadar');
+    const nexradSiteSelect = document.getElementById('nexradSite');
+    const nexradProductSelect = document.getElementById('nexradProduct');
+    const nexradTiltSelect = document.getElementById('nexradTilt');
+
+    if (toggleAdvancedBtn) {
+        toggleAdvancedBtn.addEventListener('click', () => toggleAdvancedRadar(true));
+    }
+
+    if (closeAdvancedBtn) {
+        closeAdvancedBtn.addEventListener('click', () => toggleAdvancedRadar(false));
+    }
+
+    if (nexradSiteSelect) {
+        nexradSiteSelect.addEventListener('change', updateNexradRadar);
+    }
+
+    if (nexradProductSelect) {
+        nexradProductSelect.addEventListener('change', updateNexradRadar);
+    }
+
+    if (nexradTiltSelect) {
+        nexradTiltSelect.addEventListener('change', updateNexradRadar);
     }
 }
 

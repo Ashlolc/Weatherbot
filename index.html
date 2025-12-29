@@ -203,37 +203,128 @@
                 </div>
             </section>
 
-            <!-- Sun & Moon Card -->
-            <section class="weather-card-3d sun-moon-card">
+            <!-- Wind Compass & Sun/Moon Card -->
+            <section class="weather-card-3d wind-sun-card">
+                <div class="card-inner">
+                    <div class="wind-sun-grid">
+                        <!-- Animated Wind Compass -->
+                        <div class="wind-compass-container">
+                            <h4 class="mini-title">Wind</h4>
+                            <div class="wind-compass">
+                                <div class="compass-ring">
+                                    <span class="compass-dir n">N</span>
+                                    <span class="compass-dir e">E</span>
+                                    <span class="compass-dir s">S</span>
+                                    <span class="compass-dir w">W</span>
+                                </div>
+                                <div class="compass-arrow" id="windArrow"></div>
+                                <div class="compass-center">
+                                    <span class="wind-speed" id="windSpeedCompass">--</span>
+                                    <span class="wind-unit">km/h</span>
+                                </div>
+                            </div>
+                            <div class="wind-gusts" id="windGusts">Gusts: -- km/h</div>
+                        </div>
+
+                        <!-- Sun & Moon Info -->
+                        <div class="sun-moon-container">
+                            <div class="sun-moon-row">
+                                <div class="sun-moon-item">
+                                    <div class="sun-moon-icon">🌅</div>
+                                    <div class="sun-moon-label">Sunrise</div>
+                                    <div class="sun-moon-value" id="sunrise">--:--</div>
+                                </div>
+                                <div class="sun-moon-item">
+                                    <div class="sun-moon-icon">🌇</div>
+                                    <div class="sun-moon-label">Sunset</div>
+                                    <div class="sun-moon-value" id="sunset">--:--</div>
+                                </div>
+                            </div>
+                            <div class="sun-moon-row">
+                                <div class="sun-moon-item moon-phase-item">
+                                    <div class="sun-moon-label">Moon Phase</div>
+                                    <div class="sun-moon-value" id="moonPhase">🌙 --</div>
+                                </div>
+                                <div class="sun-moon-item">
+                                    <div class="sun-moon-icon">💨</div>
+                                    <div class="sun-moon-label">Air Quality</div>
+                                    <div class="sun-moon-value" id="aqi">--</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Storm Tracker -->
+            <section class="weather-card-3d storm-tracker-card" id="stormTrackerCard">
                 <div class="card-inner">
                     <h3 class="section-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <circle cx="12" cy="12" r="5"/>
-                            <line x1="12" y1="1" x2="12" y2="3"/>
-                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/>
+                            <polyline points="13,11 9,17 15,17 11,23"/>
                         </svg>
-                        Sun & Moon
+                        Storm Tracker
                     </h3>
-                    <div class="sun-moon-grid">
-                        <div class="sun-moon-item">
-                            <div class="sun-moon-icon">🌅</div>
-                            <div class="sun-moon-label">Sunrise</div>
-                            <div class="sun-moon-value" id="sunrise">--:--</div>
+                    <div class="storm-tracker-content" id="stormTrackerContent">
+                        <div class="no-storms">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22,4 12,14.01 9,11.01"/>
+                            </svg>
+                            <span>No severe weather detected</span>
                         </div>
-                        <div class="sun-moon-item">
-                            <div class="sun-moon-icon">🌇</div>
-                            <div class="sun-moon-label">Sunset</div>
-                            <div class="sun-moon-value" id="sunset">--:--</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Precipitation Timeline -->
+            <section class="weather-card-3d precip-timeline-card">
+                <div class="card-inner">
+                    <h3 class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                        </svg>
+                        Precipitation Timeline
+                    </h3>
+                    <div class="precip-timeline" id="precipTimeline">
+                        <div class="precip-graph">
+                            <div class="precip-bars" id="precipBars"></div>
+                            <div class="precip-times" id="precipTimes"></div>
                         </div>
-                        <div class="sun-moon-item moon-phase-item">
-                            <div class="sun-moon-label">Moon Phase</div>
-                            <div class="sun-moon-value" id="moonPhase">🌙 --</div>
+                        <div class="precip-legend">
+                            <div class="precip-legend-item">
+                                <div class="legend-color light"></div>
+                                <span>Light</span>
+                            </div>
+                            <div class="precip-legend-item">
+                                <div class="legend-color moderate"></div>
+                                <span>Moderate</span>
+                            </div>
+                            <div class="precip-legend-item">
+                                <div class="legend-color heavy"></div>
+                                <span>Heavy</span>
+                            </div>
                         </div>
-                        <div class="sun-moon-item">
-                            <div class="sun-moon-icon">💨</div>
-                            <div class="sun-moon-label">Air Quality</div>
-                            <div class="sun-moon-value" id="aqi">--</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Outfit Recommendations -->
+            <section class="weather-card-3d outfit-card">
+                <div class="card-inner">
+                    <h3 class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>
+                        </svg>
+                        What to Wear
+                    </h3>
+                    <div class="outfit-content" id="outfitContent">
+                        <div class="outfit-main">
+                            <div class="outfit-icon" id="outfitIcon">👕</div>
+                            <div class="outfit-summary" id="outfitSummary">Loading recommendations...</div>
                         </div>
+                        <div class="outfit-items" id="outfitItems"></div>
                     </div>
                 </div>
             </section>
@@ -303,6 +394,7 @@
 
         <!-- Radar View -->
         <main id="radarView" class="main-content hidden">
+            <!-- Basic Radar -->
             <section class="radar-container-3d">
                 <div class="radar-header">
                     <h3>Weather Radar</h3>
@@ -314,6 +406,14 @@
                             <option value="wind_new">Wind Speed</option>
                             <option value="pressure_new">Pressure</option>
                         </select>
+                        <button class="radar-toggle-btn" id="toggleAdvancedRadar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="12" cy="12" r="6"/>
+                                <circle cx="12" cy="12" r="2"/>
+                            </svg>
+                            Advanced NEXRAD
+                        </button>
                     </div>
                 </div>
                 <div class="radar-map-wrapper">
@@ -329,6 +429,205 @@
                         <span>Low</span>
                         <span>Medium</span>
                         <span>High</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lightning Map -->
+            <section class="radar-container-3d lightning-section">
+                <div class="radar-header">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:20px;height:20px;margin-right:8px;">
+                            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
+                        </svg>
+                        Lightning Activity
+                    </h3>
+                    <div class="lightning-stats" id="lightningStats">
+                        <span class="lightning-count">Strikes: <strong id="strikeCount">--</strong></span>
+                        <span class="lightning-range">Within 50km</span>
+                    </div>
+                </div>
+                <div class="radar-map-wrapper lightning-map-wrapper">
+                    <div id="lightningMap" class="radar-map"></div>
+                </div>
+                <div class="lightning-legend">
+                    <div class="lightning-legend-item">
+                        <div class="strike-dot recent"></div>
+                        <span>&lt; 5 min</span>
+                    </div>
+                    <div class="lightning-legend-item">
+                        <div class="strike-dot medium"></div>
+                        <span>5-15 min</span>
+                    </div>
+                    <div class="lightning-legend-item">
+                        <div class="strike-dot old"></div>
+                        <span>15-30 min</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Advanced NEXRAD Radar -->
+            <section class="advanced-radar-container hidden" id="advancedRadarSection">
+                <div class="advanced-radar-header">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:20px;height:20px;margin-right:8px;">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="12" r="6"/>
+                            <circle cx="12" cy="12" r="2"/>
+                            <line x1="12" y1="2" x2="12" y2="12"/>
+                        </svg>
+                        Advanced NEXRAD Radar
+                    </h3>
+                    <button class="close-advanced-btn" id="closeAdvancedRadar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="nexrad-controls">
+                    <div class="nexrad-control-group">
+                        <label>Radar Site</label>
+                        <select id="nexradSite" class="radar-select">
+                            <option value="">Select Radar Site...</option>
+                            <optgroup label="Northeast">
+                                <option value="KOKX">New York City, NY (KOKX)</option>
+                                <option value="KBOX">Boston, MA (KBOX)</option>
+                                <option value="KDIX">Philadelphia, PA (KDIX)</option>
+                                <option value="KBGM">Binghamton, NY (KBGM)</option>
+                                <option value="KBUF">Buffalo, NY (KBUF)</option>
+                            </optgroup>
+                            <optgroup label="Southeast">
+                                <option value="KFFC">Atlanta, GA (KFFC)</option>
+                                <option value="KMIA">Miami, FL (KMIA)</option>
+                                <option value="KTBW">Tampa, FL (KTBW)</option>
+                                <option value="KCLX">Charleston, SC (KCLX)</option>
+                                <option value="KMHX">Morehead City, NC (KMHX)</option>
+                            </optgroup>
+                            <optgroup label="Midwest">
+                                <option value="KLOT">Chicago, IL (KLOT)</option>
+                                <option value="KDTX">Detroit, MI (KDTX)</option>
+                                <option value="KIWX">Fort Wayne, IN (KIWX)</option>
+                                <option value="KMKX">Milwaukee, WI (KMKX)</option>
+                                <option value="KMPX">Minneapolis, MN (KMPX)</option>
+                            </optgroup>
+                            <optgroup label="Southern Plains">
+                                <option value="KFWS">Dallas/Fort Worth, TX (KFWS)</option>
+                                <option value="KEWX">Austin/San Antonio, TX (KEWX)</option>
+                                <option value="KHGX">Houston, TX (KHGX)</option>
+                                <option value="KTLX">Oklahoma City, OK (KTLX)</option>
+                                <option value="KINX">Tulsa, OK (KINX)</option>
+                            </optgroup>
+                            <optgroup label="Northern Plains">
+                                <option value="KFSD">Sioux Falls, SD (KFSD)</option>
+                                <option value="KABR">Aberdeen, SD (KABR)</option>
+                                <option value="KBIS">Bismarck, ND (KBIS)</option>
+                                <option value="KMVX">Fargo, ND (KMVX)</option>
+                            </optgroup>
+                            <optgroup label="Rocky Mountains">
+                                <option value="KFTG">Denver, CO (KFTG)</option>
+                                <option value="KGJX">Grand Junction, CO (KGJX)</option>
+                                <option value="KRIW">Riverton, WY (KRIW)</option>
+                                <option value="KSLC">Salt Lake City, UT (KSLC)</option>
+                            </optgroup>
+                            <optgroup label="West Coast">
+                                <option value="KMUX">San Francisco, CA (KMUX)</option>
+                                <option value="KVTX">Los Angeles, CA (KVTX)</option>
+                                <option value="KNKX">San Diego, CA (KNKX)</option>
+                                <option value="KATX">Seattle, WA (KATX)</option>
+                                <option value="KRTX">Portland, OR (KRTX)</option>
+                            </optgroup>
+                            <optgroup label="Alaska">
+                                <option value="PACG">Juneau, AK (PACG)</option>
+                                <option value="PAHG">Anchorage, AK (PAHG)</option>
+                                <option value="PAPD">Fairbanks, AK (PAPD)</option>
+                            </optgroup>
+                            <optgroup label="Hawaii">
+                                <option value="PHKM">Kohala, HI (PHKM)</option>
+                                <option value="PHMO">Molokai, HI (PHMO)</option>
+                                <option value="PHWA">South Shore, HI (PHWA)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="nexrad-control-group">
+                        <label>Radar Product</label>
+                        <select id="nexradProduct" class="radar-select">
+                            <option value="N0Q">Base Reflectivity (N0Q)</option>
+                            <option value="N0U">Base Velocity (N0U)</option>
+                            <option value="N0C">Correlation Coefficient (N0C)</option>
+                            <option value="N0H">Hydrometeor Classification (N0H)</option>
+                            <option value="N0K">Specific Differential Phase (N0K)</option>
+                            <option value="N0X">Differential Reflectivity (N0X)</option>
+                            <option value="DVL">Vertically Integrated Liquid (DVL)</option>
+                            <option value="EET">Enhanced Echo Tops (EET)</option>
+                        </select>
+                    </div>
+
+                    <div class="nexrad-control-group">
+                        <label>Tilt Angle</label>
+                        <select id="nexradTilt" class="radar-select">
+                            <option value="0">0.5° (Lowest)</option>
+                            <option value="1">1.5°</option>
+                            <option value="2">2.4°</option>
+                            <option value="3">3.4°</option>
+                            <option value="4">4.3°</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="nexrad-map-container">
+                    <div id="nexradMap" class="radar-map"></div>
+                    <div class="nexrad-info-overlay">
+                        <div class="nexrad-site-info" id="nexradSiteInfo">
+                            <span class="site-name">No site selected</span>
+                            <span class="scan-time" id="nexradScanTime">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nexrad-legends">
+                    <div class="nexrad-legend reflectivity" id="legendReflectivity">
+                        <div class="legend-title">Reflectivity (dBZ)</div>
+                        <div class="legend-gradient reflectivity-gradient"></div>
+                        <div class="legend-labels">
+                            <span>-30</span>
+                            <span>0</span>
+                            <span>20</span>
+                            <span>40</span>
+                            <span>60</span>
+                            <span>75+</span>
+                        </div>
+                    </div>
+                    <div class="nexrad-legend velocity hidden" id="legendVelocity">
+                        <div class="legend-title">Velocity (kts)</div>
+                        <div class="legend-gradient velocity-gradient"></div>
+                        <div class="legend-labels">
+                            <span>-64</span>
+                            <span>-32</span>
+                            <span>0</span>
+                            <span>+32</span>
+                            <span>+64</span>
+                        </div>
+                    </div>
+                    <div class="nexrad-legend correlation hidden" id="legendCorrelation">
+                        <div class="legend-title">Correlation Coefficient</div>
+                        <div class="legend-gradient correlation-gradient"></div>
+                        <div class="legend-labels">
+                            <span>0.20</span>
+                            <span>0.70</span>
+                            <span>0.85</span>
+                            <span>0.95</span>
+                            <span>1.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nexrad-product-info">
+                    <h4>Product Guide</h4>
+                    <div class="product-descriptions" id="productDescription">
+                        <p><strong>Base Reflectivity (N0Q):</strong> Shows precipitation intensity. Higher values indicate heavier precipitation or larger particles.</p>
                     </div>
                 </div>
             </section>

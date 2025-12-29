@@ -745,8 +745,148 @@ body.mobile-mode {
     color: var(--text-primary);
 }
 
-/* ========== Sun & Moon Card ========== */
-.sun-moon-grid {
+/* ========== Wind Compass & Sun/Moon Card ========== */
+.wind-sun-card {
+    grid-column: span 2;
+}
+
+.mobile-mode .wind-sun-card {
+    grid-column: span 1;
+}
+
+.wind-sun-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    align-items: center;
+}
+
+.mobile-mode .wind-sun-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+}
+
+/* Wind Compass */
+.wind-compass-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.mini-title {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0;
+}
+
+.wind-compass {
+    width: 160px;
+    height: 160px;
+    position: relative;
+    background: var(--bg-tertiary);
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    box-shadow: var(--depth-2), inset 0 0 30px rgba(0, 0, 0, 0.3);
+}
+
+.compass-ring {
+    position: absolute;
+    inset: 0;
+}
+
+.compass-dir {
+    position: absolute;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.compass-dir.n { top: 8px; left: 50%; transform: translateX(-50%); }
+.compass-dir.s { bottom: 8px; left: 50%; transform: translateX(-50%); }
+.compass-dir.e { right: 8px; top: 50%; transform: translateY(-50%); }
+.compass-dir.w { left: 8px; top: 50%; transform: translateY(-50%); }
+
+.compass-arrow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 60px;
+    background: linear-gradient(to top, transparent 0%, var(--text-primary) 30%, #ff4444 100%);
+    transform-origin: bottom center;
+    transform: translate(-50%, -100%) rotate(0deg);
+    border-radius: 2px;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.compass-arrow::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 12px solid #ff4444;
+}
+
+.compass-arrow::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--text-primary) 0%, transparent 100%);
+    border-radius: 2px;
+}
+
+.compass-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: var(--bg-secondary);
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.wind-speed {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.wind-unit {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+}
+
+.wind-gusts {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* Sun & Moon Container */
+.sun-moon-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.sun-moon-row {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-md);
@@ -765,12 +905,12 @@ body.mobile-mode {
 }
 
 .sun-moon-icon {
-    font-size: 2rem;
+    font-size: 1.5rem;
     margin-bottom: var(--spacing-xs);
 }
 
 .sun-moon-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -778,7 +918,7 @@ body.mobile-mode {
 }
 
 .sun-moon-value {
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-primary);
 }
@@ -788,6 +928,269 @@ body.mobile-mode {
     align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
+    font-size: 0.8rem;
+}
+
+/* ========== Storm Tracker ========== */
+.storm-tracker-card {
+    border-left: 3px solid var(--text-muted);
+    transition: border-color 0.3s ease;
+}
+
+.storm-tracker-card.has-storm {
+    border-left-color: #ff4444;
+    animation: storm-pulse 2s infinite;
+}
+
+@keyframes storm-pulse {
+    0%, 100% { box-shadow: var(--depth-3), 0 0 0 0 rgba(255, 68, 68, 0.4); }
+    50% { box-shadow: var(--depth-3), 0 0 20px 5px rgba(255, 68, 68, 0.2); }
+}
+
+.storm-tracker-content .no-storms {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.storm-tracker-content .no-storms svg {
+    width: 20px;
+    height: 20px;
+    stroke: #4ade80;
+}
+
+.storm-item {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    border-left: 3px solid #ff4444;
+}
+
+.storm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-sm);
+}
+
+.storm-type {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-weight: 600;
+    color: #ff4444;
+}
+
+.storm-type svg {
+    width: 20px;
+    height: 20px;
+}
+
+.storm-countdown {
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: 'SF Mono', monospace;
+    color: var(--text-primary);
+}
+
+.storm-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-sm);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.storm-detail {
+    text-align: center;
+}
+
+.storm-detail-value {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+}
+
+/* ========== Precipitation Timeline ========== */
+.precip-timeline-card {
+    grid-column: span 2;
+}
+
+.mobile-mode .precip-timeline-card {
+    grid-column: span 1;
+}
+
+.precip-timeline {
+    padding-top: var(--spacing-sm);
+}
+
+.precip-graph {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.precip-bars {
+    display: flex;
+    align-items: flex-end;
+    height: 80px;
+    gap: 2px;
+    padding: 0 var(--spacing-xs);
+}
+
+.precip-bar {
+    flex: 1;
+    min-width: 0;
+    border-radius: 2px 2px 0 0;
+    transition: height 0.3s ease, background 0.3s ease;
+    position: relative;
+}
+
+.precip-bar::after {
+    content: attr(data-chance);
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.precip-bar:hover::after {
+    opacity: 1;
+}
+
+.precip-bar.light {
+    background: linear-gradient(to top, rgba(96, 165, 250, 0.3), rgba(96, 165, 250, 0.6));
+}
+
+.precip-bar.moderate {
+    background: linear-gradient(to top, rgba(96, 165, 250, 0.5), rgba(59, 130, 246, 0.8));
+}
+
+.precip-bar.heavy {
+    background: linear-gradient(to top, rgba(59, 130, 246, 0.7), rgba(37, 99, 235, 1));
+}
+
+.precip-bar.none {
+    background: var(--bg-tertiary);
+    min-height: 4px;
+}
+
+.precip-times {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-xs) var(--spacing-xs) 0;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+.precip-legend {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+}
+
+.precip-legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.legend-color.light {
+    background: rgba(96, 165, 250, 0.5);
+}
+
+.legend-color.moderate {
+    background: rgba(59, 130, 246, 0.7);
+}
+
+.legend-color.heavy {
+    background: rgba(37, 99, 235, 1);
+}
+
+/* ========== Outfit Recommendations ========== */
+.outfit-card {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+}
+
+.outfit-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.outfit-main {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.outfit-icon {
+    font-size: 2.5rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+}
+
+.outfit-summary {
+    flex: 1;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.outfit-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.outfit-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-md);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+}
+
+.outfit-item:hover {
+    background: var(--border-color);
+    color: var(--text-primary);
+}
+
+.outfit-item-icon {
+    font-size: 1rem;
 }
 
 /* ========== Saved Locations ========== */
@@ -1210,6 +1613,332 @@ body.mobile-mode {
     justify-content: space-between;
     font-size: 0.75rem;
     color: var(--text-muted);
+}
+
+/* ========== Lightning Map ========== */
+.lightning-section {
+    min-height: 350px;
+}
+
+.lightning-stats {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    font-size: 0.875rem;
+}
+
+.lightning-count strong {
+    color: #fbbf24;
+}
+
+.lightning-range {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.lightning-map-wrapper {
+    height: 280px;
+}
+
+.lightning-legend {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.lightning-legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.strike-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    animation: strike-glow 1.5s infinite;
+}
+
+.strike-dot.recent {
+    background: #fbbf24;
+    box-shadow: 0 0 10px #fbbf24;
+}
+
+.strike-dot.medium {
+    background: #f97316;
+    box-shadow: 0 0 8px #f97316;
+}
+
+.strike-dot.old {
+    background: #78716c;
+    box-shadow: 0 0 5px #78716c;
+}
+
+@keyframes strike-glow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.2); }
+}
+
+.lightning-strike {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.lightning-strike.recent {
+    background: #fbbf24;
+    box-shadow: 0 0 15px #fbbf24, 0 0 30px #fbbf24;
+    animation: strike-flash 0.3s ease-out, strike-fade 2s ease-out forwards;
+}
+
+.lightning-strike.medium {
+    background: #f97316;
+    box-shadow: 0 0 10px #f97316;
+}
+
+.lightning-strike.old {
+    background: #78716c;
+    box-shadow: 0 0 5px #78716c;
+}
+
+@keyframes strike-flash {
+    0% { transform: translate(-50%, -50%) scale(3); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+@keyframes strike-fade {
+    0%, 90% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* ========== Advanced NEXRAD Radar ========== */
+.radar-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.radar-toggle-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.radar-toggle-btn:hover {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+}
+
+.advanced-radar-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+    grid-column: span 2;
+}
+
+.advanced-radar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-lg);
+}
+
+.advanced-radar-header h3 {
+    display: flex;
+    align-items: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.close-advanced-btn {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.close-advanced-btn:hover {
+    background: #ff4444;
+    border-color: #ff4444;
+    color: white;
+}
+
+.close-advanced-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.nexrad-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.mobile-mode .nexrad-controls {
+    grid-template-columns: 1fr;
+}
+
+.nexrad-control-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-xs);
+}
+
+.nexrad-map-container {
+    position: relative;
+    height: 450px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--bg-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.nexrad-info-overlay {
+    position: absolute;
+    top: var(--spacing-md);
+    left: var(--spacing-md);
+    z-index: 1000;
+}
+
+.nexrad-site-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: var(--radius-sm);
+    backdrop-filter: blur(5px);
+}
+
+.nexrad-site-info .site-name {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.nexrad-site-info .scan-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.nexrad-legends {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-md);
+}
+
+.nexrad-legend {
+    flex: 1;
+    max-width: 300px;
+    padding: var(--spacing-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.nexrad-legend .legend-title {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-sm);
+    text-align: center;
+}
+
+.legend-gradient {
+    height: 12px;
+    border-radius: 4px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.reflectivity-gradient {
+    background: linear-gradient(to right,
+        #00ffff 0%,
+        #00ff00 20%,
+        #ffff00 40%,
+        #ff8800 60%,
+        #ff0000 80%,
+        #ff00ff 100%
+    );
+}
+
+.velocity-gradient {
+    background: linear-gradient(to right,
+        #00ff00 0%,
+        #008800 25%,
+        #444444 50%,
+        #880000 75%,
+        #ff0000 100%
+    );
+}
+
+.correlation-gradient {
+    background: linear-gradient(to right,
+        #666666 0%,
+        #0000ff 25%,
+        #00ff00 50%,
+        #ffff00 75%,
+        #ff00ff 100%
+    );
+}
+
+.nexrad-legend .legend-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+.nexrad-product-info {
+    padding: var(--spacing-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.nexrad-product-info h4 {
+    font-size: 0.875rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-secondary);
+}
+
+.product-descriptions p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.product-descriptions strong {
+    color: var(--text-primary);
 }
 
 /* ========== Chat Sidebar ========== */
