@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherBot - 3D Weather Experience</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Weather Background -->
+    <div id="weatherBackground" class="weather-background weather-clear"></div>
+
+    <!-- Device Selection Modal -->
+    <div id="deviceModal" class="modal-overlay">
+        <div class="modal-3d">
+            <div class="modal-content">
+                <div class="modal-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <h2>Welcome to WeatherBot</h2>
+                <p>Select your device type for the optimal experience</p>
+                <div class="device-buttons">
+                    <button class="device-btn" data-device="mobile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                            <line x1="12" y1="18" x2="12.01" y2="18"/>
+                        </svg>
+                        <span>Mobile</span>
+                    </button>
+                    <button class="device-btn" data-device="desktop">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                        <span>Desktop / Tablet</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="app-container hidden">
+        <!-- Header -->
+        <header class="header-3d">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                        <circle cx="12" cy="12" r="4"/>
+                    </svg>
+                </div>
+                <h1>WeatherBot</h1>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-view="dashboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-btn" data-view="radar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="6"/>
+                        <circle cx="12" cy="12" r="2"/>
+                        <line x1="12" y1="2" x2="12" y2="12"/>
+                    </svg>
+                    <span>Radar</span>
+                </button>
+                <button class="nav-btn" data-view="nexrad">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="6"/>
+                        <circle cx="12" cy="12" r="2"/>
+                        <path d="M12 2v10M2 12h10"/>
+                    </svg>
+                    <span>NEXRAD</span>
+                </button>
+                <button class="nav-btn" data-view="satellite">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                    <span>Satellite</span>
+                </button>
+                <button class="nav-btn" data-view="social">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M17 2H7a5 5 0 0 0-5 5v10a5 5 0 0 0 5 5h10a5 5 0 0 0 5-5V7a5 5 0 0 0-5-5z"/>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                    </svg>
+                    <span>Social</span>
+                </button>
+                <button class="nav-btn chatbot-btn" id="openChatBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <span>Ask WeatherBot</span>
+                </button>
+            </nav>
+            <div class="header-actions">
+                <button class="action-btn" id="refreshBtn" title="Refresh Weather">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <polyline points="23,4 23,10 17,10"/>
+                        <polyline points="1,20 1,14 7,14"/>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                    </svg>
+                </button>
+                <button class="action-btn" id="shareBtn" title="Share Weather">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="18" cy="5" r="3"/>
+                        <circle cx="6" cy="12" r="3"/>
+                        <circle cx="18" cy="19" r="3"/>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                    </svg>
+                </button>
+                <button class="action-btn" id="openSettingsBtn" title="Settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Location Search -->
+        <div class="search-container">
+            <div class="search-box-3d">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="locationInput" placeholder="Search location..." autocomplete="off">
+                <button class="icon-btn" id="saveLocationBtn" title="Save Location">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </button>
+                <button class="icon-btn" id="locateBtn" title="Use my location">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="autocomplete-dropdown" id="autocompleteDropdown"></div>
+        </div>
+
+        <!-- Dashboard View -->
+        <main id="dashboardView" class="main-content">
+            <!-- Current Weather Card -->
+            <section class="weather-card-3d current-weather">
+                <div class="card-inner">
+                    <div class="weather-main">
+                        <div class="weather-icon-3d" id="weatherIcon">
+                            <div class="icon-sphere"></div>
+                        </div>
+                        <div class="weather-info">
+                            <div class="location-name" id="locationName">Loading...</div>
+                            <div class="temperature" id="temperature">--°</div>
+                            <div class="weather-desc" id="weatherDesc">--</div>
+                            <div class="feels-like" id="feelsLike">Feels like --°</div>
+                        </div>
+                    </div>
+                    <div class="weather-details">
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                            </svg>
+                            <span class="detail-label">Humidity</span>
+                            <span class="detail-value" id="humidity">--%</span>
+                        </div>
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>
+                            </svg>
+                            <span class="detail-label">Wind</span>
+                            <span class="detail-value" id="wind">-- km/h</span>
+                        </div>
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <circle cx="12" cy="12" r="5"/>
+                                <line x1="12" y1="1" x2="12" y2="3"/>
+                                <line x1="12" y1="21" x2="12" y2="23"/>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                                <line x1="1" y1="12" x2="3" y2="12"/>
+                                <line x1="21" y1="12" x2="23" y2="12"/>
+                            </svg>
+                            <span class="detail-label">UV Index</span>
+                            <span class="detail-value" id="uvIndex">--</span>
+                        </div>
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <line x1="12" y1="20" x2="12" y2="10"/>
+                                <line x1="18" y1="20" x2="18" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="16"/>
+                            </svg>
+                            <span class="detail-label">Pressure</span>
+                            <span class="detail-value" id="pressure">-- hPa</span>
+                        </div>
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <span class="detail-label">Visibility</span>
+                            <span class="detail-value" id="visibility">-- km</span>
+                        </div>
+                        <div class="detail-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                            </svg>
+                            <span class="detail-label">Dew Point</span>
+                            <span class="detail-value" id="dewPoint">--°</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Wind Compass & Sun/Moon Card -->
+            <section class="weather-card-3d wind-sun-card">
+                <div class="card-inner">
+                    <div class="wind-sun-grid">
+                        <!-- Animated Wind Compass -->
+                        <div class="wind-compass-container">
+                            <h4 class="mini-title">Wind</h4>
+                            <div class="wind-compass">
+                                <div class="compass-ring">
+                                    <span class="compass-dir n">N</span>
+                                    <span class="compass-dir e">E</span>
+                                    <span class="compass-dir s">S</span>
+                                    <span class="compass-dir w">W</span>
+                                </div>
+                                <div class="compass-arrow" id="windArrow"></div>
+                                <div class="compass-center">
+                                    <span class="wind-speed" id="windSpeedCompass">--</span>
+                                    <span class="wind-unit">km/h</span>
+                                </div>
+                            </div>
+                            <div class="wind-gusts" id="windGusts">Gusts: -- km/h</div>
+                        </div>
+
+                        <!-- Sun & Moon Info -->
+                        <div class="sun-moon-container">
+                            <div class="sun-moon-row">
+                                <div class="sun-moon-item">
+                                    <div class="sun-moon-icon">🌅</div>
+                                    <div class="sun-moon-label">Sunrise</div>
+                                    <div class="sun-moon-value" id="sunrise">--:--</div>
+                                </div>
+                                <div class="sun-moon-item">
+                                    <div class="sun-moon-icon">🌇</div>
+                                    <div class="sun-moon-label">Sunset</div>
+                                    <div class="sun-moon-value" id="sunset">--:--</div>
+                                </div>
+                            </div>
+                            <div class="sun-moon-row">
+                                <div class="sun-moon-item moon-phase-item">
+                                    <div class="sun-moon-label">Moon Phase</div>
+                                    <div class="sun-moon-value" id="moonPhase">🌙 --</div>
+                                </div>
+                                <div class="sun-moon-item">
+                                    <div class="sun-moon-icon">💨</div>
+                                    <div class="sun-moon-label">Air Quality</div>
+                                    <div class="sun-moon-value" id="aqi">--</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Storm Tracker -->
+            <section class="weather-card-3d storm-tracker-card" id="stormTrackerCard">
+                <div class="card-inner">
+                    <h3 class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/>
+                            <polyline points="13,11 9,17 15,17 11,23"/>
+                        </svg>
+                        Storm Tracker
+                    </h3>
+                    <div class="storm-tracker-content" id="stormTrackerContent">
+                        <div class="no-storms">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22,4 12,14.01 9,11.01"/>
+                            </svg>
+                            <span>No severe weather detected</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Precipitation Timeline -->
+            <section class="weather-card-3d precip-timeline-card">
+                <div class="card-inner">
+                    <h3 class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                        </svg>
+                        Precipitation Timeline
+                    </h3>
+                    <div class="precip-timeline" id="precipTimeline">
+                        <div class="precip-graph">
+                            <div class="precip-bars" id="precipBars"></div>
+                            <div class="precip-times" id="precipTimes"></div>
+                        </div>
+                        <div class="precip-legend">
+                            <div class="precip-legend-item">
+                                <div class="legend-color light"></div>
+                                <span>Light</span>
+                            </div>
+                            <div class="precip-legend-item">
+                                <div class="legend-color moderate"></div>
+                                <span>Moderate</span>
+                            </div>
+                            <div class="precip-legend-item">
+                                <div class="legend-color heavy"></div>
+                                <span>Heavy</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Outfit Recommendations -->
+            <section class="weather-card-3d outfit-card">
+                <div class="card-inner">
+                    <h3 class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>
+                        </svg>
+                        What to Wear
+                    </h3>
+                    <div class="outfit-content" id="outfitContent">
+                        <div class="outfit-main">
+                            <div class="outfit-icon" id="outfitIcon">👕</div>
+                            <div class="outfit-summary" id="outfitSummary">Loading recommendations...</div>
+                        </div>
+                        <div class="outfit-items" id="outfitItems"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Saved Locations -->
+            <section class="weather-card-3d saved-locations-card">
+                <div class="card-inner">
+                    <h3 class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        Saved Locations
+                    </h3>
+                    <div class="saved-locations-container" id="savedLocationsContainer">
+                        <div class="no-saved">No saved locations</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Weather Alerts -->
+            <section class="alerts-section" id="alertsSection">
+                <h3 class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    Weather Alerts
+                </h3>
+                <div class="alerts-container" id="alertsContainer">
+                    <div class="no-alerts">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22,4 12,14.01 9,11.01"/>
+                        </svg>
+                        <span>No active weather alerts</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hourly Forecast -->
+            <section class="forecast-section hourly">
+                <h3 class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12,6 12,12 16,14"/>
+                    </svg>
+                    Hourly Forecast
+                </h3>
+                <div class="forecast-scroll" id="hourlyForecast"></div>
+            </section>
+
+            <!-- 7-Day Forecast -->
+            <section class="forecast-section daily">
+                <h3 class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    7-Day Forecast
+                </h3>
+                <div class="daily-forecast" id="dailyForecast"></div>
+            </section>
+        </main>
+
+        <!-- Radar View -->
+        <main id="radarView" class="main-content hidden">
+            <!-- Animated Radar -->
+            <section class="radar-container-3d radar-animated">
+                <div class="radar-header">
+                    <h3>Weather Radar</h3>
+                    <div class="radar-controls">
+                        <select id="radarLayer" class="radar-select">
+                            <option value="precipitation_new">Precipitation</option>
+                            <option value="clouds_new">Clouds</option>
+                            <option value="temp_new">Temperature</option>
+                            <option value="wind_new">Wind Speed</option>
+                            <option value="pressure_new">Pressure</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="radar-map-wrapper">
+                    <div id="radarMap" class="radar-map"></div>
+                    <div class="radar-overlay">
+                        <div class="radar-scan"></div>
+                    </div>
+                </div>
+                <!-- Radar Animation Controls -->
+                <div class="radar-animation-controls">
+                    <button class="anim-btn" id="radarAnimBackward" title="Step Backward">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="19,20 9,12 19,4"/>
+                            <line x1="5" y1="4" x2="5" y2="20"/>
+                        </svg>
+                    </button>
+                    <button class="anim-btn play-btn" id="radarAnimPlay" title="Play/Pause">
+                        <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5,3 19,12 5,21"/>
+                        </svg>
+                        <svg class="pause-icon hidden" viewBox="0 0 24 24" fill="currentColor">
+                            <rect x="6" y="4" width="4" height="16"/>
+                            <rect x="14" y="4" width="4" height="16"/>
+                        </svg>
+                    </button>
+                    <button class="anim-btn" id="radarAnimForward" title="Step Forward">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="5,4 15,12 5,20"/>
+                            <line x1="19" y1="4" x2="19" y2="20"/>
+                        </svg>
+                    </button>
+                    <div class="anim-timeline">
+                        <input type="range" id="radarAnimSlider" min="0" max="11" value="11">
+                        <div class="anim-timestamps" id="radarAnimTimestamps"></div>
+                    </div>
+                    <span class="anim-time-display" id="radarAnimTimeDisplay">Now</span>
+                </div>
+                <div class="radar-legend">
+                    <div class="legend-title">Intensity</div>
+                    <div class="legend-bar"></div>
+                    <div class="legend-labels">
+                        <span>Low</span>
+                        <span>Medium</span>
+                        <span>High</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lightning Map -->
+            <section class="radar-container-3d lightning-section">
+                <div class="radar-header">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:20px;height:20px;margin-right:8px;">
+                            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
+                        </svg>
+                        Lightning Activity
+                    </h3>
+                    <div class="lightning-stats" id="lightningStats">
+                        <span class="lightning-count">Strikes: <strong id="strikeCount">--</strong></span>
+                        <span class="lightning-range">Within 50km</span>
+                    </div>
+                </div>
+                <div class="radar-map-wrapper lightning-map-wrapper">
+                    <div id="lightningMap" class="radar-map"></div>
+                </div>
+                <div class="lightning-legend">
+                    <div class="lightning-legend-item">
+                        <div class="strike-dot recent"></div>
+                        <span>&lt; 5 min</span>
+                    </div>
+                    <div class="lightning-legend-item">
+                        <div class="strike-dot medium"></div>
+                        <span>5-15 min</span>
+                    </div>
+                    <div class="lightning-legend-item">
+                        <div class="strike-dot old"></div>
+                        <span>15-30 min</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- NEXRAD View -->
+        <main id="nexradView" class="main-content hidden">
+            <section class="nexrad-fullscreen">
+                <div id="nexradMap" class="nexrad-map-full"></div>
+
+                <!-- Overlay Controls -->
+                <div class="nexrad-overlay-controls">
+                    <!-- Product Buttons -->
+                    <div class="nexrad-product-buttons">
+                        <button class="nexrad-btn active" data-product="N0Q" title="Base Reflectivity">
+                            <span class="btn-icon">REF</span>
+                            <span class="btn-label">Reflectivity</span>
+                        </button>
+                        <button class="nexrad-btn" data-product="N0U" title="Base Velocity">
+                            <span class="btn-icon">VEL</span>
+                            <span class="btn-label">Velocity</span>
+                        </button>
+                        <button class="nexrad-btn" data-product="N0C" title="Correlation Coefficient">
+                            <span class="btn-icon">CC</span>
+                            <span class="btn-label">Correlation</span>
+                        </button>
+                    </div>
+
+                    <!-- Toggle Buttons -->
+                    <div class="nexrad-toggle-buttons">
+                        <button class="nexrad-toggle active" id="toggleRadar" title="Toggle Radar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="12" cy="12" r="6"/>
+                                <circle cx="12" cy="12" r="2"/>
+                            </svg>
+                            Radar
+                        </button>
+                        <button class="nexrad-toggle" id="toggleWarnings" title="Toggle Weather Warnings">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                <line x1="12" y1="9" x2="12" y2="13"/>
+                                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                            </svg>
+                            Warnings
+                        </button>
+                        <button class="nexrad-toggle" id="toggleCounties" title="Toggle County Borders">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <line x1="3" y1="12" x2="21" y2="12"/>
+                                <line x1="12" y1="3" x2="12" y2="21"/>
+                            </svg>
+                            Counties
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Legend Overlay -->
+                <div class="nexrad-legend-overlay" id="nexradLegendOverlay">
+                    <div class="legend-bar-vertical" id="legendBar"></div>
+                    <div class="legend-labels-vertical">
+                        <span>75+</span>
+                        <span>60</span>
+                        <span>40</span>
+                        <span>20</span>
+                        <span>0</span>
+                        <span>-30</span>
+                    </div>
+                    <div class="legend-unit">dBZ</div>
+                </div>
+
+                <!-- Info Overlay -->
+                <div class="nexrad-info-bar">
+                    <span id="nexradProductName">Click a radar site to view</span>
+                    <span class="separator">|</span>
+                    <span id="nexradTime">--</span>
+                </div>
+            </section>
+        </main>
+
+        <!-- Satellite View -->
+        <main id="satelliteView" class="main-content hidden">
+            <section class="satellite-fullscreen">
+                <div id="satelliteMap" class="satellite-map-full"></div>
+
+                <!-- Satellite Controls -->
+                <div class="satellite-overlay-controls">
+                    <!-- Band Selection -->
+                    <div class="satellite-band-buttons">
+                        <button class="satellite-btn active" data-band="geocolor" title="GeoColor (True Color)">
+                            <span class="btn-icon">GEO</span>
+                            <span class="btn-label">GeoColor</span>
+                        </button>
+                        <button class="satellite-btn" data-band="visible" title="Visible Light">
+                            <span class="btn-icon">VIS</span>
+                            <span class="btn-label">Visible</span>
+                        </button>
+                        <button class="satellite-btn" data-band="infrared" title="Infrared">
+                            <span class="btn-icon">IR</span>
+                            <span class="btn-label">Infrared</span>
+                        </button>
+                        <button class="satellite-btn" data-band="watervapor" title="Water Vapor">
+                            <span class="btn-icon">WV</span>
+                            <span class="btn-label">Water Vapor</span>
+                        </button>
+                    </div>
+
+                    <!-- Satellite Selection -->
+                    <div class="satellite-select-buttons">
+                        <button class="satellite-region active" data-satellite="goes-east" title="GOES-East (US East)">
+                            GOES-E
+                        </button>
+                        <button class="satellite-region" data-satellite="goes-west" title="GOES-West (US West)">
+                            GOES-W
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Animation Controls -->
+                <div class="satellite-animation-controls">
+                    <button class="sat-anim-btn" id="satAnimBackward">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="19,20 9,12 19,4"/>
+                            <line x1="5" y1="4" x2="5" y2="20"/>
+                        </svg>
+                    </button>
+                    <button class="sat-anim-btn play-btn" id="satAnimPlay">
+                        <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5,3 19,12 5,21"/>
+                        </svg>
+                        <svg class="pause-icon hidden" viewBox="0 0 24 24" fill="currentColor">
+                            <rect x="6" y="4" width="4" height="16"/>
+                            <rect x="14" y="4" width="4" height="16"/>
+                        </svg>
+                    </button>
+                    <button class="sat-anim-btn" id="satAnimForward">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="5,4 15,12 5,20"/>
+                            <line x1="19" y1="4" x2="19" y2="20"/>
+                        </svg>
+                    </button>
+                    <div class="sat-anim-timeline">
+                        <input type="range" id="satAnimSlider" min="0" max="23" value="23">
+                    </div>
+                    <span class="sat-anim-time" id="satAnimTimeDisplay">Latest</span>
+                </div>
+
+                <!-- Info Bar -->
+                <div class="satellite-info-bar">
+                    <span id="satelliteBandName">GOES-East GeoColor</span>
+                    <span class="separator">|</span>
+                    <span id="satelliteTime">--</span>
+                </div>
+            </section>
+        </main>
+
+        <!-- Social Media Weather View -->
+        <main id="socialView" class="main-content hidden">
+            <section class="social-container">
+                <!-- Map with Reports -->
+                <div class="social-map-section">
+                    <div id="socialMap" class="social-map"></div>
+
+                    <!-- Map Overlay Controls -->
+                    <div class="social-map-controls">
+                        <button class="social-filter-btn active" data-filter="all" title="All Reports">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                            </svg>
+                            All
+                        </button>
+                        <button class="social-filter-btn" data-filter="tornado" title="Tornado Reports">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L8 8h8l-4 6h6l-8 8 2-6H6l6-8H6l6-6z"/>
+                            </svg>
+                            Tornado
+                        </button>
+                        <button class="social-filter-btn" data-filter="hail" title="Hail Reports">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"/>
+                                <circle cx="6" cy="8" r="2"/>
+                                <circle cx="18" cy="8" r="2"/>
+                                <circle cx="8" cy="16" r="2"/>
+                                <circle cx="16" cy="16" r="2"/>
+                            </svg>
+                            Hail
+                        </button>
+                        <button class="social-filter-btn" data-filter="flood" title="Flood Reports">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                            </svg>
+                            Flood
+                        </button>
+                        <button class="social-filter-btn" data-filter="wind" title="Wind Reports">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>
+                            </svg>
+                            Wind
+                        </button>
+                    </div>
+
+                    <!-- Report Count -->
+                    <div class="social-report-count">
+                        <span id="reportCount">0</span> reports in last 24 hours
+                    </div>
+                </div>
+
+                <!-- Social Feed -->
+                <div class="social-feed-section">
+                    <div class="social-feed-header">
+                        <h3>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+                            </svg>
+                            Live Weather Reports
+                        </h3>
+                        <button class="refresh-feed-btn" id="refreshSocialFeed" title="Refresh Feed">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23,4 23,10 17,10"/>
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="social-feed-content" id="socialFeedContent">
+                        <div class="social-loading">
+                            <div class="social-spinner"></div>
+                            <span>Loading weather reports...</span>
+                        </div>
+                    </div>
+                    <div class="social-feed-footer">
+                        <p class="social-disclaimer">Reports sourced from social media and public APIs. Verify with official sources.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Chat Sidebar -->
+    <div id="chatSidebar" class="chat-sidebar">
+        <div class="chat-header">
+            <div class="chat-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span>Ask WeatherBot</span>
+            </div>
+            <div class="chat-header-actions">
+                <button class="chat-action-btn" id="clearChatBtn" title="Clear Chat">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <polyline points="3,6 5,6 21,6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                </button>
+                <button class="chat-action-btn" id="closeChatBtn" title="Close">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-welcome">
+                <div class="bot-avatar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2"/>
+                    </svg>
+                </div>
+                <p>Hi! I'm WeatherBot. Ask me anything about the weather, forecasts, or get personalized recommendations!</p>
+                <div class="quick-questions">
+                    <button class="quick-q" onclick="document.getElementById('chatInput').value='Should I bring an umbrella today?';document.getElementById('sendChatBtn').click();">Should I bring an umbrella?</button>
+                    <button class="quick-q" onclick="document.getElementById('chatInput').value='What\'s the weather forecast for this week?';document.getElementById('sendChatBtn').click();">Weekly forecast</button>
+                    <button class="quick-q" onclick="document.getElementById('chatInput').value='Is it a good day for outdoor activities?';document.getElementById('sendChatBtn').click();">Good for outdoors?</button>
+                </div>
+                <p class="config-hint">Configure your AI provider in settings to enable chat.</p>
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" id="chatInput" placeholder="Ask about the weather..." disabled>
+            <button class="send-btn" id="sendChatBtn" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <line x1="22" y1="2" x2="11" y2="13"/>
+                    <polygon points="22,2 15,22 11,13 2,9"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal-overlay hidden">
+        <div class="modal-3d settings-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Settings</h2>
+                    <button class="close-modal-btn" id="closeSettingsBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="settings-section">
+                    <h3>AI Provider</h3>
+                    <p class="settings-desc">Select your AI provider and enter your API key to enable the WeatherBot chat.</p>
+
+                    <div class="provider-select">
+                        <label>Provider</label>
+                        <select id="aiProvider">
+                            <option value="">Select Provider</option>
+                            <option value="openai">OpenAI (GPT-4o-mini)</option>
+                            <option value="claude">Anthropic (Claude)</option>
+                            <option value="google">Google AI (Gemini)</option>
+                            <option value="mistral">Mistral AI</option>
+                            <option value="moonshot">Moonshot AI</option>
+                        </select>
+                    </div>
+
+                    <div class="api-key-inputs">
+                        <div class="api-key-group" data-provider="openai">
+                            <label>OpenAI API Key</label>
+                            <input type="password" id="openaiKey" placeholder="sk-...">
+                        </div>
+                        <div class="api-key-group" data-provider="claude">
+                            <label>Anthropic API Key</label>
+                            <input type="password" id="claudeKey" placeholder="sk-ant-...">
+                        </div>
+                        <div class="api-key-group" data-provider="google">
+                            <label>Google AI API Key</label>
+                            <input type="password" id="googleKey" placeholder="AIza...">
+                        </div>
+                        <div class="api-key-group" data-provider="mistral">
+                            <label>Mistral API Key</label>
+                            <input type="password" id="mistralKey" placeholder="Enter your Mistral API key">
+                        </div>
+                        <div class="api-key-group" data-provider="moonshot">
+                            <label>Moonshot API Key</label>
+                            <input type="password" id="moonshotKey" placeholder="Enter your Moonshot API key">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>Weather API</h3>
+                    <p class="settings-desc">Enter your OpenWeatherMap API key for weather data. Get a free key at <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a></p>
+                    <div class="api-key-group always-show">
+                        <label>OpenWeatherMap API Key</label>
+                        <input type="password" id="weatherApiKey" placeholder="Enter your weather API key">
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>Display</h3>
+                    <div class="setting-row">
+                        <label>Temperature Unit</label>
+                        <select id="tempUnit">
+                            <option value="metric">Celsius (°C)</option>
+                            <option value="imperial">Fahrenheit (°F)</option>
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <label>Device Mode</label>
+                        <select id="deviceMode">
+                            <option value="mobile">Mobile</option>
+                            <option value="desktop">Desktop</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="save-settings-btn" id="saveSettingsBtn">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loader-3d">
+            <div class="loader-cube">
+                <div class="face front"></div>
+                <div class="face back"></div>
+                <div class="face right"></div>
+                <div class="face left"></div>
+                <div class="face top"></div>
+                <div class="face bottom"></div>
+            </div>
+        </div>
+        <p>Loading weather data...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="app.js"></script>
+</body>
+</html>
